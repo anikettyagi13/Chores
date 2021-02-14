@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/colorPrimary"
+    >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/ic_background_final"
+        android:orientation="vertical"
+        >
+        <LinearLayout
+            android:layout_marginTop="200dp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            >
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginRight="120dp"
+                android:layout_marginBottom="10dp"
+                android:fontFamily="@font/poppins_light"
+                android:text="Login"
+                android:textColor="@android:color/white"
+                android:textFontWeight="900"
+                android:textSize="16dp"
+                android:textStyle="bold"
+                />
+
+            <EditText
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:layout_marginBottom="10dp"
+                android:background="@drawable/edittext"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Email"
+                android:textSize="14dp"
+                android:inputType="textEmailAddress"
+                android:padding="8dp" />
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="50dp"
+                android:background="@drawable/edittext"
+                android:fontFamily="@font/poppins_light"
+                android:hint="Password"
+                android:textSize="14dp"
+                android:inputType="textPassword"
+                android:padding="8dp" />
+
+            <Button
+                android:id="@+id/loginClick"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginTop="20dp"
+                android:background="@drawable/buttonlogin"
+                android:fontFamily="@font/poppins_light"
+                android:paddingHorizontal="40dp"
+                android:paddingVertical="15dp"
+                android:textColor="@android:color/white"
+                android:text="LOGIN" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="30dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="10dp"
+            android:orientation="horizontal"
+            >
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Don't have an account?"
+                android:textColor="@android:color/white"
+                android:textSize="14dp"
+                android:layout_marginLeft="10dp"
+                android:fontFamily="@font/poppins_light"
+                />
+            <TextView
+                android:id="@+id/register"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" REGISTER"
+                android:textColor="@color/colorGreat"
+                android:textSize="14dp"
+                android:fontFamily="@font/poppins_light"
+                />
+        </LinearLayout>
+    </RelativeLayout>
+</LinearLayout>
