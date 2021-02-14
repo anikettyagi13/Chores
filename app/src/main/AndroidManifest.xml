@@ -20,14 +20,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".LoginActivity"></activity>
+
+        <activity android:name=".LoginActivity" />
         <activity android:name=".Home" />
         <activity
             android:name=".SignUpActivity"
             android:windowSoftInputMode="adjustResize" />
         <activity
             android:name=".MainActivity"
-            android:windowSoftInputMode="adjustResize" android:noHistory="true">
+            android:noHistory="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
