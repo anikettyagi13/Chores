@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/dialog_background"
+    android:orientation="vertical"
+    >
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Input Location"
+        android:fontFamily="@font/poppins_light"
+        android:textSize="14dp"
+        android:padding="10dp"
+        android:textColor="@android:color/white"
+        />
+    <TextView
+        android:id="@+id/error"
+        android:layout_width="match_parent"
+        android:gravity="center"
+        android:layout_height="wrap_content"
+        android:text=""
+        android:fontFamily="@font/poppins_light"
+        android:textSize="11dp"
+        android:textColor="@android:color/holo_red_dark"
+        />
+
+    <EditText
+        android:id="@+id/address"
+        android:textSize="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_post_edittext"
+        android:layout_margin="10dp"
+        android:padding = "16dp"
+        android:hint="Address"
+        android:textColorHint="@android:color/white"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        >
+        <EditText
+            android:id="@+id/city"
+            android:textSize="12dp"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/add_post_edittext"
+            android:layout_margin="10dp"
+            android:padding = "16dp"
+            android:hint="City"
+            android:paddingHorizontal="40dp"
+            android:paddingVertical="10dp"
+            android:textColorHint="@android:color/white"
+            />
+        <EditText
+            android:id="@+id/state"
+            android:layout_alignParentRight="true"
+            android:textSize="12dp"
+            android:layout_width="150dp"
+            android:layout_height="wrap_content"
+            android:background="@drawable/add_post_edittext"
+            android:layout_margin="10dp"
+            android:padding="16dp"
+            android:paddingHorizontal="40dp"
+            android:paddingVertical="10dp"
+            android:hint="State"
+            android:textColorHint="@android:color/white"
+            />
+    </RelativeLayout>
+
+    <EditText
+        android:id="@+id/pincodeSet"
+        android:textSize="12dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_post_edittext"
+        android:layout_margin="10dp"
+        android:padding = "16dp"
+        android:hint="Pin Code"
+        android:textColorHint="@android:color/white"
+        />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity=""
+        android:layout_marginHorizontal="20dp"
+        android:orientation="horizontal"
+        >
+        <Button
+            android:layout_marginHorizontal="20dp"
+            android:id="@+id/decline"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="Cancel"
+            android:textColor="@android:color/white"
+            android:background="@drawable/buttonlogin"
+            android:backgroundTint="@android:color/holo_red_dark"
+            android:layout_margin="10dp"
+            />
+        <Button
+            android:layout_marginHorizontal="20dp"
+            android:layout_alignParentRight="true"
+            android:id="@+id/accept"
+            android:layout_margin="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:background="@drawable/buttonlogin"
+            android:text="Save"
+            android:backgroundTint="@android:color/holo_green_light"
+            android:textColor="@android:color/white"
+            />
+    </RelativeLayout>
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="*This Information is used for showing your chore to other users."
+        android:textColor="@android:color/holo_orange_light"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textSize="11dp"
+
+        />
+
+
+</LinearLayout>

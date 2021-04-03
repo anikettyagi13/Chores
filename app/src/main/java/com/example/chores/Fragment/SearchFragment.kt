@@ -1,6 +1,7 @@
 package com.example.chores.Fragment
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -12,5 +13,10 @@ class SearchFragment: Fragment() {
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? = inflater.inflate(R.layout.fragment_search,container,false)
+    ): View?{
+
+        val userInfo = activity!!.intent.getSerializableExtra("userInfo")
+        Log.i("message","$userInfo hiiiii")
+        return inflater.inflate(R.layout.fragment_search,container,false)
+    }
 }

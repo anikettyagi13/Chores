@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "781384490258",
+    "project_id": "chores-305107",
+    "storage_bucket": "chores-305107.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:781384490258:android:42b204f8ef76cf08fc27cb",
+        "android_client_info": {
+          "package_name": "com.example.chores"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "781384490258-sm1004a4pl9kqpmuguut4vhvt8qj63eu.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.chores",
+            "certificate_hash": "21ff8853c526413ae55fd7826bf2dfa51089b742"
+          }
+        },
+        {
+          "client_id": "781384490258-71oph65lr1budgcpl6o0jkaocggk4h26.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJXk4472OxOsVjbF38YJjtSk7oPSkO-L4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "781384490258-71oph65lr1budgcpl6o0jkaocggk4h26.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

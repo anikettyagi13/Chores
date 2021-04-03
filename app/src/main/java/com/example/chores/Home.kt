@@ -1,12 +1,21 @@
 package com.example.chores
 
+import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
+import com.example.chores.Api.Json.UserInfoResponse
+import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.Fragment.*
 import kotlinx.android.synthetic.main.activity_home.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import java.io.Serializable
 
-class Home : AppCompatActivity() {
+class Home : AppCompatActivity(),Serializable {
+    lateinit var userInfo:UserInfoResponse
     override fun onCreate(savedInstanceState: Bundle?) {
         val HomeFragment = HomeFragment()
         val HeartFragment = HeartFragment()
@@ -16,7 +25,6 @@ class Home : AppCompatActivity() {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
-
         bottom.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.home ->{
@@ -37,6 +45,27 @@ class Home : AppCompatActivity() {
             }
             true
         }
+
+        val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
+        val sp = getSharedPreferences("chores", Context.MODE_PRIVATE)
+        val token = sp.getString("token","")
+        val id = sp.getString("id","")
+        val retrofitData = retrofitBuilder.getUserInfo("$token id $id")
+        retrofitData.enqueue(object : Callback<UserInfoResponse?> {
+            override fun onFailure(call: Call<UserInfoResponse?>, t: Throwable) {
+                Log.i("message error","hiii ${t.message}")
+            }
+
+            override fun onResponse(
+                call: Call<UserInfoResponse?>,
+                response: Response<UserInfoResponse?>
+            ) {
+                 userInfo = response.body()!!
+                Log.i("message","${response.body()} hiiii")
+                setCurrentFragment(HomeFragment)
+                getIntent().putExtra("userInfo",response.body())
+            }
+        })
     }
 
     private fun setCurrentFragment(fragment:Fragment){
@@ -45,4 +74,5 @@ class Home : AppCompatActivity() {
             commit()
         }
     }
+
 }

@@ -33,23 +33,34 @@ class LoginActivity : AppCompatActivity(), View.OnClickListener {
                 retrofitData.enqueue(object : Callback<RegisterApiResponse?> {
                     override fun onFailure(call: Call<RegisterApiResponse?>, t: Throwable) {
                         Log.i("message error","${t.message}")
+                        error.text = t.message
                     }
 
                     override fun onResponse(
                         call: Call<RegisterApiResponse?>,
                         response: Response<RegisterApiResponse?>
                     ) {
-                        Log.i("message","${response.body()}")
-                        val sharedPref: SharedPreferences = getSharedPreferences("chores", Context.MODE_PRIVATE)
-                        val editor = sharedPref.edit()
-                        editor.putString("id", response.body()!!.id.toString())
-                        editor.putString("token", response.body()!!.token)
-                        editor.apply()
-
-                        val intent= Intent(this@LoginActivity,Home::class.java)
-                        startActivity(intent)
+                        if(response.body()!!.error.length>=1){
+                            error.text = response.body()!!.error
+                        }else{
+                            Log.i("message","${response.body()}")
+                            val sharedPref: SharedPreferences = getSharedPreferences("chores", Context.MODE_PRIVATE)
+                            val editor = sharedPref.edit()
+                            editor.putString("id", response.body()!!.id.toString())
+                            editor.putString("token", response.body()!!.token)
+                            editor.apply()
+                            Log.i("message","")
+                            val intent= Intent(this@LoginActivity,MainActivity::class.java)
+                            startActivity(intent)
+                        }
                     }
                 })
+            }else{
+                if(password.text.length<=7){
+                    error.text = "Password cannot be of less than 8 charaters"
+                }else{
+                    error.text = "Invalid email"
+                }
             }
         }
 

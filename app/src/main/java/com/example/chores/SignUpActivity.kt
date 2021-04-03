@@ -7,12 +7,9 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.Toast
-import androidx.annotation.MainThread
 import com.example.chores.Api.Json.RegisterApiJson
 import com.example.chores.Api.Json.RegisterApiResponse
 import com.example.chores.Api.RetrofitBuilder
-import com.example.chores.utils.utilsInterface
 import kotlinx.android.synthetic.main.activity_sign_up.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -35,7 +32,10 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
                 error.text = "Email cannot be left blank"
             }
             else if(username.text.toString().length < 1 ){
-                error.text = "Name cannot be left blank"
+                error.text = "UserName cannot be left blank"
+            }
+            else if(username.text.toString().length>15){
+                error.text = "UserName cannot have more than 15 characters"
             }
             else if(password.length()<8 ){
                 error.text = "password cannot have less than 8 characters"
@@ -82,9 +82,13 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
                     val editor = sharedPref.edit()
                     editor.putString("id", response.body()!!.id.toString())
                     editor.putString("token", response.body()!!.token)
+                    editor.putString("username",response.body()!!.username)
                     editor.apply()
-                    val intent = Intent(this@SignUpActivity, Home::class.java)
+                    Log.i("see this","${response.body()} nkj")
+                    val intent = Intent(this@SignUpActivity, MainActivity::class.java)
                     startActivity(intent)
+                }else{
+                    error.text = response.body()?.error
                 }
             }
         })
