@@ -44,7 +44,15 @@ class AddFragment: Fragment(),View.OnClickListener{
     private lateinit var imageUri:Uri
     private lateinit var pin:String
     private lateinit var up:String
-    private lateinit var userInfo:UserInfoResponse
+    private var userInfo:UserInfoResponse = UserInfoResponse("",
+    "",
+    "",
+        ArrayList<String>(),
+    0,
+    0,
+    0.0,
+    "",
+    "")
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -55,22 +63,10 @@ class AddFragment: Fragment(),View.OnClickListener{
         yo.addImage.setOnClickListener (this)
         yo.pincode.setOnClickListener(this)
         yo.post.setOnClickListener(this)
-        val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
-        val retrofitData=  retrofitBuilder.getImage()
 
+        if(activity!!.intent.getSerializableExtra("userInfo") != null)
         userInfo = activity!!.intent.getSerializableExtra("userInfo") as UserInfoResponse
         Log.i("me","${userInfo.profile_pic} hiiiiiiiiiiiiii")
-        retrofitData.enqueue(object : Callback<ByteArray?> {
-            override fun onFailure(call: Call<ByteArray?>, t: Throwable) {
-                Log.i("message error ","$t.message")
-            }
-
-            override fun onResponse(call: Call<ByteArray?>, response: Response<ByteArray?>) {
-                Log.i("message","${response.body()}")
-                var bitmap = BitmapFactory.decodeByteArray(response.body(), 0 ,response.body()!!.size);
-                yo.addImage.setImageBitmap(bitmap)
-            }
-        })
 
         yo.username.setText(userInfo.username)
         yo.username2.setText(userInfo.username)

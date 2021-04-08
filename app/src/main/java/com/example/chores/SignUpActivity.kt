@@ -26,7 +26,7 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
          val sharedPreferences = getSharedPreferences("chores", Context.MODE_PRIVATE)
 
 //        sharedPreferences.
-         Log.i("message he","${sharedPreferences.getString("id","njk")}")
+         Log.i("message is he","${sharedPreferences.getString("id","njk")}")
         signup.setOnClickListener{
             if(email.text.toString().length <1){
                 error.text = "Email cannot be left blank"
@@ -42,6 +42,7 @@ class SignUpActivity : AppCompatActivity() , View.OnClickListener {
             }
             else{
                 CallRegisterApi()
+                Log.i("message","${sharedPreferences.getString("id","njk")}")
             }
         }
 

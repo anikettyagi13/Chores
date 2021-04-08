@@ -1,15 +1,11 @@
 package com.example.chores
 
-import android.app.ActionBar
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
@@ -20,9 +16,8 @@ import com.bumptech.glide.Glide
 import com.example.chores.Api.Json.*
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.utils.*
+import com.example.chores.utils.ClickListeners.commentClickListener
 import kotlinx.android.synthetic.main.activity_post_full__screen.*
-import kotlinx.android.synthetic.main.comments.*
-import kotlinx.android.synthetic.main.fragment_add.*
 import kotlinx.android.synthetic.main.posts.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -31,7 +26,8 @@ import java.text.DateFormat
 import java.util.*
 import kotlin.collections.ArrayList
 
-class Post_full_Screen : AppCompatActivity(),commentClickListener{
+class Post_full_Screen : AppCompatActivity(),
+    commentClickListener {
     var commentList =ArrayList<commentData>()
     lateinit var commentAdapter: CommentAdapter
     var isLoading = false
@@ -44,8 +40,6 @@ class Post_full_Screen : AppCompatActivity(),commentClickListener{
     @RequiresApi(21)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val actionBar: ActionBar? = getActionBar()
-//        actionBar!!.setDisplayHomeAsUpEnabled(true)
         setContentView(R.layout.activity_post_full__screen)
 
         postInfo = this.intent.getParcelableExtra<postData>("postInfo")!!
@@ -78,8 +72,10 @@ class Post_full_Screen : AppCompatActivity(),commentClickListener{
 
     @RequiresApi(21)
     private fun showPost() {
-        Glide.with(this).load(postInfo.profile_pic).placeholder(R.drawable.ic_outline_image_24).into(findViewById(R.id.posts_userImage))
+        Glide.with(this).load(postInfo.profile_pic).placeholder(R.drawable.account).into(findViewById(R.id.posts_userImage))
+        Glide.with(this).load(userInfo.profile_pic).placeholder(R.drawable.account).into(findViewById(R.id.applyImage))
         Glide.with(this).load(postInfo.url).placeholder(R.drawable.ic_outline_image_24).into(findViewById(R.id.posts_image))
+        posts_created.setText(postInfo.created)
         posts_username.setText(userInfo.username)
         username_top.setText(userInfo.username)
         posts_username2.setText(userInfo.username)
@@ -90,8 +86,17 @@ class Post_full_Screen : AppCompatActivity(),commentClickListener{
         post_likes.setText(postInfo.likes.toString())
         post_comments.setText(postInfo.comments.toString())
         posts_image.setBackgroundTintList(this.getResources().getColorStateList(R.color.colorPrimaryDark))
+        if(postInfo.info.length>20){
+            posts_info.text = postInfo.info.substring(0,20) + " ..."
+            post_info_show_more.visibility = View.VISIBLE
+        }else{
+            posts_info.text = postInfo.info
+        }
         if(postInfo.liked){
             post_like.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.liked));
+        }
+        post_info_show_more.setOnClickListener{
+            showMore()
         }
         post_like.setOnClickListener {
             if(postInfo.liked){
@@ -204,6 +209,11 @@ class Post_full_Screen : AppCompatActivity(),commentClickListener{
                 }
             }
         })
+    }
+
+    private fun showMore() {
+        posts_info.text = postInfo.info
+        post_info_show_more.visibility = View.GONE
     }
 
     private fun getComments() {

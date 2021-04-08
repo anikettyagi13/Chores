@@ -4,14 +4,12 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.example.chores.Api.Json.CommentAddJson
 import com.example.chores.R
-import org.w3c.dom.Text
+import com.example.chores.utils.ClickListeners.commentClickListener
 
 class CommentAdapter(var commentList:ArrayList<commentData>,val commentClickListener: commentClickListener) : RecyclerView.Adapter<CommentAdapter.myAdapter>() {
     public class myAdapter(view: View):RecyclerView.ViewHolder(view){

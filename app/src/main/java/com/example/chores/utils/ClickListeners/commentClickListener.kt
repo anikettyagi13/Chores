@@ -1,4 +1,4 @@
-package com.example.chores.utils
+package com.example.chores.utils.ClickListeners
 
 interface commentClickListener {
     fun likeClickComment(position:Int)

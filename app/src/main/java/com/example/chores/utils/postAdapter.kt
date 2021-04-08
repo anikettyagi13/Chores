@@ -1,21 +1,21 @@
 package com.example.chores.utils
 
-import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
+import android.view.View.*
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
+import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.R
+import com.example.chores.utils.ClickListeners.postClickListener
 
 
-class postAdapter(val postsList:List<postData>,val postClickListener: postClickListener): RecyclerView.Adapter<postAdapter.myAdapter>(){
+class postAdapter(val postsList:List<postData>, val postClickListener: postClickListener, val userData:UserInfoResponse): RecyclerView.Adapter<postAdapter.myAdapter>(){
     public class myAdapter(view: View):RecyclerView.ViewHolder(view){
         val post_userImage: ImageView = view.findViewById(R.id.posts_userImage)
         val username:TextView = view.findViewById(R.id.posts_username)
@@ -35,6 +35,8 @@ class postAdapter(val postsList:List<postData>,val postClickListener: postClickL
         val comment_view:LinearLayout = view.findViewById(R.id.comment_view)
         val add_comment:ImageButton = view.findViewById(R.id.add_comment)
         val commentUsername:TextView = view.findViewById(R.id.post_comment_username)
+        val apply_image:ImageView = view.findViewById(R.id.applyImage)
+        val post_info_show_more:TextView = view.findViewById(R.id.post_info_show_more)
     }
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): postAdapter.myAdapter {
         val itemView = LayoutInflater.from(parent.context)
@@ -50,10 +52,17 @@ class postAdapter(val postsList:List<postData>,val postClickListener: postClickL
         holder.username.text = postsList[position].username
         Glide.with(holder.posts_image.getContext()).load(postsList[position].url).placeholder(R.drawable.ic_outline_image_24)
             .into(holder.posts_image)
-        Glide.with(holder.post_userImage.getContext()).load(postsList[position].profile_pic).into(holder.post_userImage)
+
+        Glide.with(holder.post_userImage.getContext()).load(postsList[position].profile_pic).placeholder(R.drawable.account_border).into(holder.post_userImage)
+        Glide.with(holder.apply_image.getContext()).load(userData.profile_pic).placeholder(R.drawable.account_border).into(holder.apply_image)
         holder.price_tag.text = postsList[position].price_tag
         holder.pincode.text = postsList[position].pincode
-        holder.posts_info.text = postsList[position].info
+        if(postsList[position].info.length>20){
+            holder.posts_info.text = postsList[position].info.substring(0,20) + " ..."
+            holder.post_info_show_more.visibility = VISIBLE
+        }else{
+            holder.posts_info.text = postsList[position].info
+        }
         holder.posts_exact_location.text = postsList[position].address
         holder.username2.text = postsList[position].username
         holder.posts_created.text = postsList[position].created
@@ -82,6 +91,9 @@ class postAdapter(val postsList:List<postData>,val postClickListener: postClickL
         holder.itemView.setOnClickListener{
             postClickListener.postClick(position)
         }
+        holder.post_info_show_more.setOnClickListener{
+            showMore(position,holder)
+        }
         holder.post_like.setOnClickListener{
             if(!postsList[position].liked){
                 Log.i("message likedddddd","liked kokokokokokokokoko click")
@@ -102,5 +114,10 @@ class postAdapter(val postsList:List<postData>,val postClickListener: postClickL
                 postClickListener.disLikeCLick(position)
             }
         }
+    }
+
+    private fun showMore(position: Int,holder: myAdapter) {
+        holder.posts_info.text = postsList[position].info
+        holder.post_info_show_more.visibility = GONE
     }
 }

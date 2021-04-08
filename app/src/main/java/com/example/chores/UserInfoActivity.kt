@@ -15,32 +15,21 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat
-import androidx.core.view.marginTop
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.chores.Api.Json.UserInfoJson
 import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.utils.imageProcessor
 import com.example.chores.utils.postAdapter
-import com.example.chores.utils.postClickListener
 import com.example.chores.utils.postData
-import com.google.android.material.internal.ContextUtils.getActivity
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
 import kotlinx.android.synthetic.main.activity_user_info.*
-import kotlinx.android.synthetic.main.dialog_location_picker.view.*
 import kotlinx.android.synthetic.main.dialog_location_picker.view.accept
 import kotlinx.android.synthetic.main.dialog_location_picker.view.decline
-import kotlinx.android.synthetic.main.fragment_add.*
-import kotlinx.android.synthetic.main.pincodes_dialog_box.*
 import kotlinx.android.synthetic.main.pincodes_dialog_box.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import java.security.AccessController.getContext
-import java.util.stream.IntStream.range
 
 
 class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {

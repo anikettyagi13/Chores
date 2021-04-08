@@ -28,20 +28,32 @@ interface ApiInterface {
     @GET("image")
     fun getImage():Call<ByteArray>
 
+    //userInfo
+
     @POST("userInfo")
     fun userInfo(@Header("Token")Body:String, @Body body: UserInfoJson):Call<UserInfoResponse>
 
     @GET("getUserInfo")
     fun getUserInfo(@Header("Token")Body: String):Call<UserInfoResponse>
 
+
+    //posts urls
+
     @POST("getPosts")
     fun getPosts(@Header("Token")Body:String, @Body body:timeInfoAndUserId):Call<ArrayList<postData>>
+
+    @POST("getUserPosts")
+    fun getUserPosts(@Header("Token")Body:String, @Body body:timeInfoAndUserId):Call<ArrayList<postData>>
 
     @POST("likePost")
     fun likePost(@Header("Token")Body:String,@Body body:likePostJson):Call<String>
 
     @POST("dislikePost")
     fun dislikePost(@Header("Token")Body:String,@Body body: disLikePostJson):Call<String>
+
+
+
+    // comments urls
 
     @POST("addComment")
     fun addComment(@Header("Token")Body: String,@Body body:CommentAddJson):Call<String>

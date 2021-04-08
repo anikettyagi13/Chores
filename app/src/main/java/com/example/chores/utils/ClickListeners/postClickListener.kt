@@ -1,4 +1,4 @@
-package com.example.chores.utils
+package com.example.chores.utils.ClickListeners
 
 import android.view.View
 import android.widget.EditText
