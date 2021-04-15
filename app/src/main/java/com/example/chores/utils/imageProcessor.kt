@@ -17,7 +17,6 @@ class imageProcessor() {
     fun imageProcessor(uri: Uri, cr : ContentResolver, quality:Int): ByteArray {
         val f = File(uri.path)
         val size = f.length()
-        Log.i("message size","${size} sizeing")
         val inputStream = cr.openInputStream(uri)
         val bitmap = BitmapFactory.decodeStream(inputStream)
         val baos = ByteArrayOutputStream()

@@ -4,10 +4,7 @@ import com.example.chores.Api.Json.*
 import com.example.chores.utils.commentData
 import com.example.chores.utils.postData
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.GET
-import retrofit2.http.Header
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface ApiInterface {
     @POST("register")
@@ -36,6 +33,11 @@ interface ApiInterface {
     @GET("getUserInfo")
     fun getUserInfo(@Header("Token")Body: String):Call<UserInfoResponse>
 
+    @GET("getUserInfo/{id}")
+    fun getUserInfoById(@Path("id")id:String):Call<UserInfoResponse>
+
+    @PUT("userInfo")
+    fun putUserInfo(@Header("Token")Body:String, @Body body:UserInfoResponse) : Call<String>
 
     //posts urls
 
@@ -44,6 +46,9 @@ interface ApiInterface {
 
     @POST("getUserPosts")
     fun getUserPosts(@Header("Token")Body:String, @Body body:timeInfoAndUserId):Call<ArrayList<postData>>
+
+    @POST("getUserPosts/{id}")
+    fun getUserPostsById( @Body body:timeInfoAndUserId,@Path("id")id:String):Call<ArrayList<postData>>
 
     @POST("likePost")
     fun likePost(@Header("Token")Body:String,@Body body:likePostJson):Call<String>

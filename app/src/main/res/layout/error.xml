@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@drawable/error_background"
+    android:gravity="center"
+    >
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_baseline_report_problem_24"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="SORRY"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="50sp"
+        android:gravity="center"
+        android:fontFamily="@font/poppins_bold"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="404"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="30sp"
+        android:gravity="center"
+        android:fontFamily="@font/poppins_light"
+        />
+    <TextView
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Something Went Wrong"
+    android:textColor="@android:color/darker_gray"
+    android:textSize="30sp"
+    android:gravity="center"
+    android:fontFamily="@font/poppins_light"
+    />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="we are sorry for the inconvenience"
+        android:textColor="@android:color/darker_gray"
+        android:textSize="20sp"
+        android:gravity="center"
+        android:fontFamily="@font/poppins_light"
+        />
+
+</LinearLayout>

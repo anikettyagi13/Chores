@@ -23,9 +23,43 @@
         android:layout_height="wrap_content"
         android:text=""
         android:fontFamily="@font/poppins_light"
-        android:textSize="11dp"
+        android:textSize="11sp"
         android:textColor="@android:color/holo_red_dark"
         />
+    <TextView
+        android:id="@+id/show_pincode1"
+        android:visibility="gone"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_post_edittext"
+        android:layout_margin="10dp"
+        android:padding = "16dp"
+        android:textColor="@android:color/white"
+        />
+    <TextView
+        android:id="@+id/show_pincode2"
+        android:visibility="gone"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_post_edittext"
+        android:layout_margin="10dp"
+        android:padding = "16dp"
+        android:textColor="@android:color/white"
+        />
+    <TextView
+        android:id="@+id/show_pincode3"
+        android:visibility="gone"
+        android:textSize="12sp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/add_post_edittext"
+        android:layout_margin="10dp"
+        android:padding = "16dp"
+        android:textColor="@android:color/white"
+        />
+
     <EditText
         android:id="@+id/info_pincode1"
         android:textSize="12dp"
@@ -50,7 +84,7 @@
         />
     <EditText
         android:id="@+id/info_pincode3"
-        android:textSize="12dp"
+        android:textSize="12sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/add_post_edittext"
@@ -78,6 +112,19 @@
             android:backgroundTint="@android:color/holo_red_dark"
             android:layout_margin="10dp"
             />
+        <Button
+            android:id="@+id/close"
+            android:layout_centerInParent="true"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="CLOSE"
+            android:visibility="gone"
+            android:textColor="@android:color/white"
+            android:background="@drawable/dialog_background"
+            android:layout_margin="10dp"
+            />
+
         <Button
             android:layout_marginHorizontal="20dp"
             android:layout_alignParentRight="true"

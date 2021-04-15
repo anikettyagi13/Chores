@@ -1,5 +1,6 @@
 package com.example.chores.Fragment
 
+import android.app.Activity.RESULT_CANCELED
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -15,6 +16,7 @@ import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.chores.AccountDetails
 import com.example.chores.Api.Json.*
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.LoginActivity
@@ -43,7 +45,17 @@ class HomeFragment: Fragment(),
     val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
     var millis:Long = System.currentTimeMillis()/1000
     var loadMore:Boolean = true
-    lateinit var userInfo : UserInfoResponse
+    private var userInfo:UserInfoResponse = UserInfoResponse("",
+        "",
+        "",
+        ArrayList<String>(),
+        0,
+        0,
+        0.0,
+        "",
+        "",
+        "",
+        "")
     var noMoreChores =false
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -51,8 +63,11 @@ class HomeFragment: Fragment(),
         savedInstanceState: Bundle?
     ): View? {
         val yo =inflater.inflate(R.layout.fragment_home,container,false)
-        userInfo = activity!!.intent.getSerializableExtra("userInfo") as UserInfoResponse
-        Log.i("message","$userInfo hiiiii")
+        if(activity!!.intent.getSerializableExtra("userInfo")!=null){
+            userInfo = activity!!.intent.getSerializableExtra("userInfo") as UserInfoResponse
+        }else{
+            getUser()
+        }
 
         yo.refresh_home.setOnRefreshListener{
             getPosts()
@@ -77,15 +92,43 @@ class HomeFragment: Fragment(),
                         Log.i("message","scrolling")
                         getPosts()
                         refresh_home.isRefreshing=true
+                        pBar_posts.visibility = View.VISIBLE
                     }
                 }
             }
         })
-        if(postList.size==0){
+        if(postList.size==0 &&userInfo.name.isNotEmpty()){
             getPosts()
         }
         return yo
     }
+
+    private fun getUser() {
+        val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
+        val sp = activity!!.getSharedPreferences("chores", Context.MODE_PRIVATE)
+        val token = sp.getString("token","")
+        val id = sp.getString("id","")
+        val retrofitData = retrofitBuilder.getUserInfo("$token id $id")
+        retrofitData.enqueue(object : Callback<UserInfoResponse?> {
+            override fun onFailure(call: Call<UserInfoResponse?>, t: Throwable) {
+                if(t.message!!.contains("Failed to connect to",true)) {
+                    Toast.makeText(activity, "No Internet Connection", Toast.LENGTH_LONG).show()
+                    error.visibility = View.VISIBLE
+                    refresh_home.visibility = View.GONE
+                }
+            }
+            override fun onResponse(
+                call: Call<UserInfoResponse?>,
+                response: Response<UserInfoResponse?>
+            ) {
+                userInfo = response.body()!!
+                Log.i("message","${response.body()} hiiii")
+                getPosts()
+                pBar_posts.visibility = View.VISIBLE
+            }
+        })
+    }
+
 
     private fun getPosts() {
         val sharedPreferences = context!!.getSharedPreferences("chores", Context.MODE_PRIVATE)
@@ -101,6 +144,8 @@ class HomeFragment: Fragment(),
         retrofitData.enqueue(object : Callback<ArrayList<postData>?> {
             override fun onFailure(call: Call<ArrayList<postData>?>, t: Throwable){
                 Toast.makeText(context,"${t.message}",Toast.LENGTH_LONG).show()
+                error.visibility = View.VISIBLE
+                refresh_home.visibility = View.GONE
             }
 
             override fun onResponse(
@@ -123,15 +168,32 @@ class HomeFragment: Fragment(),
                     loadMore = true
                     postsAdapter.notifyDataSetChanged()
                     refresh_home.isRefreshing=false
+                    pBar_posts.visibility = View.GONE
                 }
             }
         })
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if(resultCode != RESULT_CANCELED){
+            when(requestCode){
+                151->{
+                    if(data!!.getParcelableExtra<postData>("postData")!=null){
+                        val post = data!!.getParcelableExtra<postData>("postData")!!
+                        val position = data!!.getIntExtra("position",0)
+                        postList[position] = post
+                        postsAdapter.notifyDataSetChanged()
+                    }
+                }
+            }
+        }
+    }
 
     // post click listeners
     override fun userNameClick(position: Int) {
-        Toast.makeText(context,"user clicked",Toast.LENGTH_LONG).show()
+        val intent = Intent(activity!!, AccountDetails::class.java)
+        intent.putExtra("userId",postList[position].user_id)
+        startActivity(intent)
     }
 
     override fun addCommentClick(position: Int, comment: String,comment_write:EditText,comment_view:LinearLayout) {
@@ -149,7 +211,8 @@ class HomeFragment: Fragment(),
         val intent = Intent(activity,Post_full_Screen::class.java)
         intent.putExtra("userInfo",userInfo)
         intent.putExtra("postInfo",postList[position])
-        startActivity(intent)
+        intent.putExtra("position",position)
+        startActivityForResult(intent,151)
     }
 
     override fun comment(position: Int, username: TextView) {

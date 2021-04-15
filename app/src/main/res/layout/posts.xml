@@ -85,7 +85,6 @@
             <ProgressBar
                 android:layout_centerInParent="true"
                 android:layout_width="wrap_content"
-                android:progressDrawable="@drawable/color"
                 android:layout_height="wrap_content"/>
             <ImageView
                 android:id="@+id/posts_image"

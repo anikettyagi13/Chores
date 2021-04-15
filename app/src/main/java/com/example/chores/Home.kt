@@ -8,20 +8,21 @@ import androidx.fragment.app.Fragment
 import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.Fragment.*
+import com.example.chores.utils.userInfoInterface
 import kotlinx.android.synthetic.main.activity_home.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import java.io.Serializable
 
-class Home : AppCompatActivity(),Serializable {
+class Home : AppCompatActivity(),Serializable,userInfoInterface {
     lateinit var userInfo:UserInfoResponse
     override fun onCreate(savedInstanceState: Bundle?) {
         val HomeFragment = HomeFragment()
         val HeartFragment = HeartFragment()
         val SearchFragment = SearchFragment()
         val AddFragment = AddFragment()
-        val AccountFragment = AccountFragment()
+        val AccountFragment = AccountFragment(this)
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
@@ -73,6 +74,11 @@ class Home : AppCompatActivity(),Serializable {
             replace(R.id.fragment,fragment)
             commit()
         }
+    }
+
+    override fun changeUserInfo(info:UserInfoResponse) {
+        userInfo = info
+        getIntent().putExtra("userInfo",userInfo)
     }
 
 }

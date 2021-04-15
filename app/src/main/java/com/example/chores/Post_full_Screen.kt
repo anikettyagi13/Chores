@@ -15,8 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chores.Api.Json.*
 import com.example.chores.Api.RetrofitBuilder
-import com.example.chores.utils.*
 import com.example.chores.utils.ClickListeners.commentClickListener
+import com.example.chores.utils.CommentAdapter
+import com.example.chores.utils.commentData
+import com.example.chores.utils.postData
 import kotlinx.android.synthetic.main.activity_post_full__screen.*
 import kotlinx.android.synthetic.main.posts.*
 import retrofit2.Call
@@ -36,6 +38,7 @@ class Post_full_Screen : AppCompatActivity(),
     val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
     lateinit var postInfo :postData
     lateinit var userInfo :UserInfoResponse
+    var position :Int = 0
 
     @RequiresApi(21)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,6 +47,7 @@ class Post_full_Screen : AppCompatActivity(),
 
         postInfo = this.intent.getParcelableExtra<postData>("postInfo")!!
         userInfo =this.intent.getSerializableExtra("userInfo") as UserInfoResponse
+        position = this.intent.getIntExtra("position",0)
         showPost()
         Log.i("message","$postInfo postInfo")
         Log.i("message","$userInfo postInfo")
@@ -66,8 +70,19 @@ class Post_full_Screen : AppCompatActivity(),
         })
         getComments()
         post_back.setOnClickListener {
+            val intent = Intent()
+            intent.putExtra("postData",postInfo)
+            intent.putExtra("position",position)
+            setResult(151,intent)
             finish()
         }
+    }
+    override fun onBackPressed() {
+        val intent = Intent()
+        intent.putExtra("postData",postInfo )
+        intent.putExtra("position",position)
+        setResult(151, intent)
+        finish()
     }
 
     @RequiresApi(21)
@@ -104,12 +119,14 @@ class Post_full_Screen : AppCompatActivity(),
                 post_like.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.like));
                 postInfo.likes-=1
                 post_likes.setText(postInfo.likes.toString())
+//                postInterface.postDataChanged(position,postInfo)
                 disLikePost()
             }else{
                 post_like.setImageDrawable(ContextCompat.getDrawable(this, R.drawable.liked));
                 postInfo.likes+=1
                 post_likes.setText(postInfo.likes.toString())
                 postInfo.liked=true
+//                postInterface.postDataChanged(position,postInfo)
                 likePost()
             }
         }

@@ -1,6 +1,7 @@
 package com.example.chores.Fragment
 
 import android.app.Activity
+import android.app.Activity.RESULT_CANCELED
 import android.app.Activity.RESULT_OK
 import android.app.AlertDialog
 import android.app.ProgressDialog
@@ -52,6 +53,8 @@ class AddFragment: Fragment(),View.OnClickListener{
     0,
     0.0,
     "",
+    "",
+    "",
     "")
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -87,27 +90,32 @@ class AddFragment: Fragment(),View.OnClickListener{
         resultCode: Int,
         data: Intent?
     ) {
-        when(requestCode){
-            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE ->{
-                val result = CropImage.getActivityResult(data)
-                if(resultCode == Activity.RESULT_OK){
-                    Glide.with(addImage.context).load(result.uri).into(addImage)
-                    imageUri = result.uri
-                }else{
+        Log.i("message error","rooooroerkoekro /${requestCode}")
+        if(resultCode != RESULT_CANCELED){
+            when(requestCode){
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE ->{
+                    val result = CropImage.getActivityResult(data)
                     Log.i("message error","rooooroerkoekro /${result.error}")
+                    if(resultCode == Activity.RESULT_OK){
+                        Glide.with(addImage.context).load(result.uri).into(addImage)
+                        imageUri = result.uri
+                    }else{
+                        Log.i("message error","rooooroerkoekro /${result.error}")
+                    }
+                }
+                100 ->{
+                    if(resultCode== RESULT_OK){
+                        val place = Autocomplete.getPlaceFromIntent(data!!)
+                        exact_location.setText(place.getAddress())
+                    }else if(resultCode == AutocompleteActivity.RESULT_ERROR){
+                        val status  = Autocomplete.getStatusFromIntent(data!!)
+                        Log.i("message err","${status.statusMessage}")
+                        Toast.makeText(context,status.statusMessage,Toast.LENGTH_LONG).show()
+                    }
                 }
             }
-            100 ->{
-                if(resultCode== RESULT_OK){
-                    val place = Autocomplete.getPlaceFromIntent(data!!)
-                    exact_location.setText(place.getAddress())
-                }else if(resultCode == AutocompleteActivity.RESULT_ERROR){
-                    val status  = Autocomplete.getStatusFromIntent(data!!)
-                    Log.i("message err","${status.statusMessage}")
-                    Toast.makeText(context,status.statusMessage,Toast.LENGTH_LONG).show()
-                }
-            }
-
+        }else{
+            Toast.makeText(context,"No image selected",Toast.LENGTH_LONG)
         }
 
     }
@@ -143,7 +151,6 @@ class AddFragment: Fragment(),View.OnClickListener{
         val date = DateFormat.getDateInstance().format(calendar.time)
         val millis:Long = System.currentTimeMillis()/1000
 
-        val userInfo = activity!!.intent.getSerializableExtra("userInfo") as UserInfoResponse
         Log.i("me","$userInfo hiiiiiiiiiiiiii")
         val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
         val AddPostJson = AddPostJson(

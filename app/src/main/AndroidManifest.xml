@@ -24,7 +24,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Post_full_Screen"></activity>
+        <activity android:name=".AccountDetails"></activity>
+        <activity android:name=".Post_full_Screen" />
         <activity android:name=".UserInfoActivity" />
 
         <meta-data

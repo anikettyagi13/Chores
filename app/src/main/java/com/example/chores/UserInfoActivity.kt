@@ -9,12 +9,16 @@ import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
+import com.bumptech.glide.Glide
 import com.example.chores.Api.Json.UserInfoJson
 import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.Api.RetrofitBuilder
@@ -35,18 +39,22 @@ import retrofit2.Response
 class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
     public var postList = ArrayList<postData>()
     private lateinit var postsAdapter: postAdapter
-    private var pincodesArray = ArrayList<String>()
+    private var pincodesArray = arrayListOf("","","")
     private lateinit var imageUri: Uri
 
     // elements from layout
     lateinit var info_username:TextView
-    lateinit var info_username2:TextView
+    lateinit var info_username2:EditText
     lateinit var no_post : TextView
     lateinit var save_userinfo:Button
     lateinit var userinfo_name:EditText
     lateinit var userinfo_pincodes:Button
-    lateinit var info_userimage_button:ImageButton
+    lateinit var info_userimage_button:Button
     lateinit var  username:String
+    lateinit var userinfo_bio: EditText
+    lateinit var userinfo_website: EditText
+    lateinit var userInfo: UserInfoResponse
+
     lateinit var pb:ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -65,7 +73,21 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         userinfo_name= findViewById(R.id.userinfo_name)
         userinfo_pincodes= findViewById(R.id.userinfo_pincodes)
         info_userimage_button = findViewById(R.id.info_userimage_button)
+        userinfo_bio = findViewById(R.id.userinfo_bio)
+        userinfo_website = findViewById(R.id.userinfo_website)
+        val back : ImageButton = findViewById(R.id.back)
 
+
+        setUserNameInLayout(username!!,info_username,info_username2)
+
+        if(this.intent.getSerializableExtra("userInfo")!=null){
+            back.visibility = View.VISIBLE
+            userInfo = this.intent.getSerializableExtra("userInfo") as UserInfoResponse
+            actAsAEditScreen(userInfo)
+            back.setOnClickListener {
+                finish()
+            }
+        }
 
         //Click listeners
         save_userinfo.setOnClickListener (this)
@@ -73,20 +95,65 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         info_userimage_button.setOnClickListener(this)
 
         Log.i("username","$username ji")
-        setUserNameInLayout(username!!,info_username,info_username2)
         val param = no_post.layoutParams as ViewGroup.MarginLayoutParams
         param.setMargins(30,10,30,10)
-
-        no_post.text = "No Chores Uploaded By User"
         no_post.layoutParams = param
-//        var recyclerView:RecyclerView = findViewById(R.id.posts_user)
-//        postsAdapter = postAdapter(postList,this)
-//        val layoutManager = LinearLayoutManager(applicationContext)
-//        recyclerView.layoutManager = layoutManager
-//        recyclerView.adapter = postsAdapter
-//        recyclerView.setItemViewCacheSize(5)
-//        recyclerView.setNestedScrollingEnabled(true)
-//        preparePosts()
+
+        val mTextEditorWatcher: TextWatcher = object : TextWatcher {
+                override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+                override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                    if(s.length<=40){
+                        bioCount.setText("${s.length}/40")
+                    }else{
+                        return
+                    }
+                }
+                override fun afterTextChanged(s: Editable) {}
+            }
+
+        val nameLengthChecker: TextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.length<=20){
+                    nameCount.setText("${s.length}/20")
+                }else{
+                    return
+                }
+            }
+            override fun afterTextChanged(s: Editable) {}
+        }
+        val usernameLengthChecker: TextWatcher = object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
+
+            override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
+                if(s.length<=20){
+                    usernameCount.setText("${s.length}/20")
+                }else{
+                    return
+                }
+            }
+            override fun afterTextChanged(s: Editable) {}
+        }
+
+        info_username2.addTextChangedListener(usernameLengthChecker);
+        userinfo_name.addTextChangedListener(nameLengthChecker);
+        userinfo_bio.addTextChangedListener(mTextEditorWatcher);
+
+    }
+
+    private fun actAsAEditScreen(userInfo: UserInfoResponse){
+        info_username.text = userInfo.username
+        info_username2.setText("${userInfo.username}")
+        pincodesArray = userInfo.pincodes
+        userinfo_name.setText("${userInfo.name}")
+        userinfo_bio.setText("${userInfo.bio}")
+        Glide.with(this).load(userInfo.profile_pic).placeholder(R.drawable.account_border).into(findViewById(R.id.info_userImage))
+        userinfo_website.setText("${userInfo.website}")
+        bioCount.setText("${userInfo.bio.length}/40")
+        nameCount.setText("${userInfo.name.length}/20")
+        usernameCount.setText("${userInfo.username.length}/20")
     }
 
     private fun setUserNameInLayout(username:String,info_username:TextView,info_username2:TextView) {
@@ -94,25 +161,23 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         info_username2.text = username
     }
 
-    private fun preparePosts() {
-        postsAdapter.notifyDataSetChanged()
-    }
-
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when(requestCode) {
-            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
-                val result = CropImage.getActivityResult(data)
-                if (resultCode == Activity.RESULT_OK) {
-                    Log.i("message", "$result")
-                    info_userImage.setImageURI(result.uri)
-                    imageUri = result.uri
-                } else {
-                    Toast.makeText(this,"Unable to place image try again!",Toast.LENGTH_LONG).show()
+        if(resultCode != Activity.RESULT_CANCELED){
+            when(requestCode) {
+                CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                    val result = CropImage.getActivityResult(data)
+                    if (resultCode == Activity.RESULT_OK) {
+                        Log.i("message", "$result")
+                        Glide.with(this).load(result.uri).placeholder(R.drawable.account_border).into(findViewById(R.id.info_userImage))
+//                        info_userImage.setImageURI(result.uri)
+                        imageUri = result.uri
+                    } else {
+                        Toast.makeText(this,"Unable to place image try again!",Toast.LENGTH_LONG).show()
+                    }
                 }
             }
         }
-
     }
 
     private fun launchImageUri() {
@@ -138,9 +203,9 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         }
         dialogView.accept.setOnClickListener{
             if(dialogView.info_pincode1.text.length>=3 && dialogView.info_pincode1.text.length<=16 && dialogView.info_pincode2.text.length>=3 && dialogView.info_pincode2.text.length<=16 && dialogView.info_pincode3.text.length>=3 && dialogView.info_pincode3.text.length<=16){
-                pincodesArray.add(dialogView.info_pincode1.text.toString())
-                pincodesArray.add(dialogView.info_pincode2.text.toString())
-                pincodesArray.add(dialogView.info_pincode3.text.toString())
+                pincodesArray[0]=dialogView.info_pincode1.text.toString()
+                pincodesArray[1]=dialogView.info_pincode2.text.toString()
+                pincodesArray[2]=dialogView.info_pincode3.text.toString()
                 AlertDialog.dismiss()
             }else{
                 if(dialogView.info_pincode1.text.length<3 || dialogView.info_pincode1.text.length>16 || dialogView.info_pincode2.text.length<3 && dialogView.info_pincode2.text.length>16 || dialogView.info_pincode3.text.length<3 || dialogView.info_pincode3.text.length>16){
@@ -168,16 +233,32 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                     no_post.text = "Every user is required to have atleast 3 pincodes"
                     userinfo_pincodes.setBackgroundTintList(getResources().getColorStateList(R.color.colorError))
                 }
+                else if(userinfo_bio.text.isEmpty()){
+                    no_post.text = "Bio is a required Field"
+                    userinfo_name.setBackgroundTintList(getResources().getColorStateList(R.color.colorError))
+                }
+                else if(info_username2.text.length<3 || info_username2.text.length>20){
+                    no_post.text =
+                        "Username is a required field and should have characters between 3 to 20."
+                    info_username2.setBackgroundTintList(getResources().getColorStateList(R.color.colorError))
+                }
                 else{
-                     pb = ProgressDialog(this)
+                    pb = ProgressDialog(this)
                     pb.setTitle("Saving data")
+                    pb.setCanceledOnTouchOutside(false)
                     pb.show()
                     val sp = getSharedPreferences("chores", Context.MODE_PRIVATE)
                     val id = sp.getString("id","")
                     if(this::imageUri.isInitialized){
                         uploadPost(pb,id!!)
                     }else{
-                        uploader("",id!!,"",pb)
+                        if(this::userInfo.isInitialized){
+//                            Log.i("message","this is initialized")
+                            uploader2("",id!!,"",pb)
+                        }else{
+                            Log.i("message","this is initialized")
+                            uploader("",id!!,"",pb)
+                        }
                     }
                 }
             }
@@ -193,9 +274,64 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
     private fun uploadPost(pb:ProgressDialog,id:String) {
         val cr = getContentResolver()
         val data = imageProcessor().imageProcessor(imageUri,cr,15)
+        if(this::userInfo.isInitialized){
+            imageProcessor().imageUploader("",id,"$id/dp",data,pb,::uploader2)
+        }else{
+            imageProcessor().imageUploader("",id,"$id/dp",data,pb,::uploader)
+        }
+    }
+    private fun uploader2(postUUID: String,id: String,uri: String,pb:ProgressDialog){
+        userInfo.name = userinfo_name.text.toString()
+        userInfo.website = userinfo_website.text.toString()
+        userInfo.bio = userinfo_bio.text.toString()
+        userInfo.username = info_username2.text.toString()
+        userInfo.pincodes = pincodesArray
+        if(uri.isNotEmpty()){
+            userInfo.profile_pic = uri
+        }
+        val sp = this.getSharedPreferences("chores",Context.MODE_PRIVATE)
+        val token =  sp.getString("token","")
+        val id = sp.getString("id","")
+        val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
+        val retrofitData = retrofitBuilder.putUserInfo("$token id $id", userInfo)
+        retrofitData.enqueue(object : Callback<String?> {
+            override fun onFailure(call: Call<String?>, t: Throwable) {
+//                Toast.makeText(this,"Unable to perform the action",Toast.LENGTH_LONG).show()
+            }
 
+            override fun onResponse(call: Call<String?>, response: Response<String?>) {
+                Log.i("message","${response.code()}")
+                if(response.code()==401){
+                    unauthorized()
+                }
+                else if(response.code()==500){
+                    Log.i("message","HEYYYYIIIII")
+//                    Toast.makeText(this,"Unable to save! :(",Toast.LENGTH_LONG).show()
+                }
+                else{
+                    Log.i("message","HEYYYY")
+                    onCloseActivity()
+                }
+                pb.dismiss()
+            }
+        })
+    }
 
-        imageProcessor().imageUploader("",id,"$id/dp",data,pb,::uploader)
+    private fun onCloseActivity() {
+        val intent = Intent()
+        intent.putExtra("userInfo",userInfo)
+        setResult(123,intent)
+        finish()
+    }
+
+    fun unauthorized() {
+        val sharedPref: SharedPreferences = this.getSharedPreferences("chores", Context.MODE_PRIVATE)
+        val editor = sharedPref.edit()
+        editor.putString("id", "")
+        editor.putString("token", "")
+        editor.putString("username","")
+        val intent  =Intent(this,LoginActivity::class.java)
+        startActivity(intent)
     }
 
     private fun uploader(postUUID: String, id: String, uri: String, pb: ProgressDialog){
@@ -242,7 +378,6 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                         pb.dismiss()
                         Log.i("hi o" ,"sading ${response.body()!!.error}")
                         Toast.makeText(this@UserInfoActivity,"Error !!",Toast.LENGTH_LONG).show()
-
                     }
                 }
             }

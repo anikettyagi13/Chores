@@ -8,13 +8,13 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:orientation="vertical">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
-            android:background="@color/colorPrimaryDark"
+            android:background="@drawable/stroke1dp"
             >
             <TextView
                 android:layout_width="match_parent"
@@ -26,18 +26,42 @@
                 android:fontFamily="@font/poppins_light"
                 />
         </LinearLayout>
+        <include layout="@layout/error" android:visibility="gone" android:id="@+id/error"/>
         <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
             android:id="@+id/refresh_home"
             android:layout_height="wrap_content"
             android:layout_marginBottom="50dp"
             android:layout_width="match_parent">
-            <androidx.recyclerview.widget.RecyclerView
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:id="@+id/home_recycler_view"
-                app:layout_behavior="@string/appbar_scrolling_view_behavior"
-                />
-
+                android:orientation="vertical"
+                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/home_recycler_view"
+                    app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                    />
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" android:background="@color/colorPrimaryDark"
+                    android:layout_gravity="center"
+                    android:gravity="center"
+                    android:padding="30dp"
+                    >
+                    <ProgressBar
+                        android:id="@+id/pBar_posts"
+                        style="?android:attr/progressBarStyleLarge"
+                        android:layout_width="wrap_content"
+                        android:progressDrawable="@drawable/probress_bar"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        >
+                    </ProgressBar>
+                </LinearLayout>
+            </LinearLayout>
+            
         </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
     </LinearLayout>
 </FrameLayout>
