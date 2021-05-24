@@ -1,5 +1,6 @@
-package com.example.chores.utils
+package com.example.chores.utils.Adapters
 
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +11,9 @@ import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chores.R
 import com.example.chores.utils.ClickListeners.commentClickListener
+import com.example.chores.utils.commentData
 
-class CommentAdapter(var commentList:ArrayList<commentData>,val commentClickListener: commentClickListener) : RecyclerView.Adapter<CommentAdapter.myAdapter>() {
+class CommentAdapter(var commentList:ArrayList<commentData>, val commentClickListener: commentClickListener) : RecyclerView.Adapter<CommentAdapter.myAdapter>() {
     public class myAdapter(view: View):RecyclerView.ViewHolder(view){
         val comment_username:TextView = view.findViewById(R.id.comment_username)
         val comment_body :TextView = view.findViewById(R.id.comment_body)
@@ -20,10 +22,12 @@ class CommentAdapter(var commentList:ArrayList<commentData>,val commentClickList
         val commentLikes : TextView = view.findViewById(R.id.comment_likes)
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CommentAdapter.myAdapter {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myAdapter {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.comments,parent,false)
-        return CommentAdapter.myAdapter(itemView)
+        return myAdapter(
+            itemView
+        )
     }
 
     override fun getItemCount(): Int {
@@ -33,7 +37,7 @@ class CommentAdapter(var commentList:ArrayList<commentData>,val commentClickList
     override fun onBindViewHolder(holder: myAdapter, position: Int) {
         holder.comment_body.setText(commentList[position].comment)
         holder.comment_username.setText(commentList[position].username)
-        holder.commentCreated.setText(commentList[position].created)
+        holder.commentCreated.setText(DateUtils.getRelativeTimeSpanString(commentList[position].time))
         holder.commentLikes.setText(commentList[position].likes.toString())
         Log.i("message comment","$commentList comment")
         if(commentList[position].liked){

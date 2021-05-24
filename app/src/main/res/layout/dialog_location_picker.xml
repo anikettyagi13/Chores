@@ -6,15 +6,51 @@
     android:orientation="vertical"
     >
 
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
+        android:orientation="horizontal"
         android:layout_height="wrap_content"
-        android:text="Input Location"
-        android:fontFamily="@font/poppins_light"
-        android:textSize="14dp"
-        android:padding="10dp"
-        android:textColor="@android:color/white"
-        />
+        android:background="@drawable/stroke1dp"
+        android:layout_marginTop="5dp"
+        android:layout_marginHorizontal="10dp"
+        >
+        <TextView
+            android:id="@+id/input"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:text="Input Location"
+            android:fontFamily="@font/poppins_light"
+            android:textSize="18sp"
+            android:padding="10dp"
+            android:gravity="center"
+            android:background="@drawable/stroke1dp_seprator"
+            android:textColor="@android:color/white"
+            />
+        <ImageView
+            android:id="@+id/earth"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="wrap_content"
+            android:src="@drawable/earth"
+            android:layout_gravity="center"
+            android:paddingHorizontal="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+        <ImageView
+            android:visibility="gone"
+            android:id="@+id/earth_selected"
+            android:layout_width="0dp"
+            android:layout_weight="5"
+            android:layout_height="36dp"
+            android:src="@drawable/earth_selected"
+            android:layout_gravity="center"
+            android:paddingHorizontal="20dp"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            />
+    </LinearLayout>
     <TextView
         android:id="@+id/error"
         android:layout_width="match_parent"
@@ -26,62 +62,70 @@
         android:textColor="@android:color/holo_red_dark"
         />
 
-    <EditText
-        android:id="@+id/address"
-        android:textSize="12dp"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_post_edittext"
-        android:layout_margin="10dp"
-        android:padding = "16dp"
-        android:hint="Address"
-        android:textColorHint="@android:color/white"
-        />
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:orientation="vertical"
+        android:id="@+id/input_location"
         >
         <EditText
-            android:id="@+id/city"
+            android:id="@+id/address"
             android:textSize="12dp"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/add_post_edittext"
             android:layout_margin="10dp"
             android:padding = "16dp"
-            android:hint="City"
-            android:paddingHorizontal="40dp"
-            android:paddingVertical="10dp"
+            android:hint="Address"
             android:textColorHint="@android:color/white"
             />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            >
+            <EditText
+                android:id="@+id/city"
+                android:textSize="12dp"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/add_post_edittext"
+                android:layout_margin="10dp"
+                android:padding = "16dp"
+                android:hint="City"
+                android:paddingHorizontal="40dp"
+                android:paddingVertical="10dp"
+                android:textColorHint="@android:color/white"
+                />
+            <EditText
+                android:id="@+id/state"
+                android:layout_alignParentRight="true"
+                android:textSize="12dp"
+                android:layout_width="150dp"
+                android:layout_height="wrap_content"
+                android:background="@drawable/add_post_edittext"
+                android:layout_margin="10dp"
+                android:padding="16dp"
+                android:paddingHorizontal="40dp"
+                android:paddingVertical="10dp"
+                android:hint="State"
+                android:textColorHint="@android:color/white"
+                />
+        </RelativeLayout>
+
         <EditText
-            android:id="@+id/state"
-            android:layout_alignParentRight="true"
+            android:id="@+id/pincodeSet"
             android:textSize="12dp"
-            android:layout_width="150dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/add_post_edittext"
             android:layout_margin="10dp"
-            android:padding="16dp"
-            android:paddingHorizontal="40dp"
-            android:paddingVertical="10dp"
-            android:hint="State"
+            android:padding = "16dp"
+            android:hint="Pin Code"
             android:textColorHint="@android:color/white"
             />
-    </RelativeLayout>
+    </LinearLayout>
 
-    <EditText
-        android:id="@+id/pincodeSet"
-        android:textSize="12dp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/add_post_edittext"
-        android:layout_margin="10dp"
-        android:padding = "16dp"
-        android:hint="Pin Code"
-        android:textColorHint="@android:color/white"
-        />
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

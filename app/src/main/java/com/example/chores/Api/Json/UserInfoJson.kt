@@ -11,4 +11,5 @@ data class UserInfoJson(val username:String
                         ,val pincodes:ArrayList<String>
                         ,val jobs_created:Int
                         ,val jobs_completed:Int
-                        ,val ratings:Double): Parcelable
+                        ,val ratings:Double
+,val bio:String,val website:String,var resume:String): Parcelable

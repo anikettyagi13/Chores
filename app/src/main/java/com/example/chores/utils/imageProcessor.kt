@@ -47,13 +47,10 @@ class imageProcessor() {
                 it.result!!.addOnSuccessListener { task ->
                     myUri = task.toString()
                     print("$myUri")
-                    Log.i("message image","$myUri jadkl")
                     uploader(UUID,id,myUri,pb)
-                    pb.dismiss()
                 }
             }
         }.addOnFailureListener {
-            Log.i("message","unable to upload")
             pb.dismiss()
         }
         return myUri

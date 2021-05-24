@@ -6,6 +6,7 @@
     android:layout_height="match_parent"
     tools:context=".UserInfoActivity"
     android:orientation="vertical"
+    android:animateLayoutChanges="true"
     android:background="@color/colorPrimaryDark"
     >
     <RelativeLayout
@@ -107,8 +108,7 @@
                             android:hint="username"
                             android:textColorHint="@android:color/darker_gray"
                             android:textColor="@android:color/white"
-                            android:background="@drawable/edittext"
-                            android:backgroundTint="@color/colorPrimary"
+                            android:background="@drawable/edittext_border"
                             />
                         <TextView
                             android:layout_alignParentRight="true"
@@ -139,8 +139,7 @@
                             android:inputType="textFilter"
                             android:textColor="@android:color/white"
                             android:textColorHint="@android:color/darker_gray"
-                            android:background="@drawable/edittext"
-                            android:backgroundTint="@color/colorPrimary"
+                            android:background="@drawable/edittext_border"
                             />
                         <TextView
                             android:id="@+id/nameCount"
@@ -149,7 +148,6 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:textSize="12sp"
-
                             android:textColor="@android:color/darker_gray"
                             android:text="10/20"
                             android:gravity="end"
@@ -170,8 +168,7 @@
                         android:textColor="@android:color/white"
                         android:maxLength="40"
                         android:textColorHint="@android:color/darker_gray"
-                        android:background="@drawable/edittext"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:background="@drawable/edittext_border"
                         />
                     <TextView
                         android:id="@+id/bioCount"
@@ -193,8 +190,7 @@
                         android:hint="link/website"
                         android:textColor="@android:color/white"
                         android:textColorHint="@android:color/darker_gray"
-                        android:background="@drawable/edittext"
-                        android:backgroundTint="@color/colorPrimary"
+                        android:background="@drawable/edittext_border"
                         />
                     <Button
                         android:id="@+id/userinfo_pincodes"
@@ -209,6 +205,39 @@
                         android:fontFamily="@font/poppins_light"
                         android:textColor="@android:color/white"
                         />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        >
+                        <Button
+                            android:id="@+id/userinfo_resume"
+                            android:layout_width="0dp"
+                            android:layout_weight="8"
+                            android:layout_height="wrap_content"
+                            android:text="Choose Resume"
+                            android:textSize="14sp"
+                            android:paddingHorizontal="5dp"
+                            android:background="@drawable/border"
+                            android:layout_centerVertical="true"
+                            android:layout_marginTop="10dp"
+                            android:fontFamily="@font/poppins_light"
+                            android:textColor="@android:color/white"
+                            />
+                        <ImageButton
+                            android:id="@+id/see_resume"
+                            android:layout_width="0dp"
+                            android:layout_weight="2"
+                            android:visibility="gone"
+                            android:layout_marginTop="5dp"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:src="@drawable/assignment"
+                            android:layout_gravity="center"
+                            android:background="@android:color/transparent"
+                            />
+                    </LinearLayout>
+
                 </LinearLayout>
             </LinearLayout>
             <LinearLayout

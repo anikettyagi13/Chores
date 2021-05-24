@@ -3,12 +3,14 @@ package com.example.chores
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.ProgressDialog
+import android.content.ContentResolver
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.FileUtils
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
@@ -17,13 +19,13 @@ import android.view.ViewGroup
 import android.widget.*
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.widget.addTextChangedListener
 import com.bumptech.glide.Glide
 import com.example.chores.Api.Json.UserInfoJson
 import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.Api.RetrofitBuilder
+import com.example.chores.utils.Adapters.postAdapter
+import com.example.chores.utils.ResumeUtils
 import com.example.chores.utils.imageProcessor
-import com.example.chores.utils.postAdapter
 import com.example.chores.utils.postData
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
@@ -34,6 +36,7 @@ import kotlinx.android.synthetic.main.pincodes_dialog_box.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.File
 
 
 class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
@@ -41,6 +44,8 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
     private lateinit var postsAdapter: postAdapter
     private var pincodesArray = arrayListOf("","","")
     private lateinit var imageUri: Uri
+    var new_resume = 0
+    var uploading = false
 
     // elements from layout
     lateinit var info_username:TextView
@@ -54,6 +59,9 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
     lateinit var userinfo_bio: EditText
     lateinit var userinfo_website: EditText
     lateinit var userInfo: UserInfoResponse
+    lateinit var resume:Button
+    lateinit var see_resume:ImageButton
+    lateinit var uri:Uri
 
     lateinit var pb:ProgressDialog
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,6 +83,8 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         info_userimage_button = findViewById(R.id.info_userimage_button)
         userinfo_bio = findViewById(R.id.userinfo_bio)
         userinfo_website = findViewById(R.id.userinfo_website)
+        resume = findViewById(R.id.userinfo_resume)
+        see_resume = findViewById(R.id.see_resume)
         val back : ImageButton = findViewById(R.id.back)
 
 
@@ -85,7 +95,7 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
             userInfo = this.intent.getSerializableExtra("userInfo") as UserInfoResponse
             actAsAEditScreen(userInfo)
             back.setOnClickListener {
-                finish()
+                onBackPressed()
             }
         }
 
@@ -93,6 +103,8 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         save_userinfo.setOnClickListener (this)
         userinfo_pincodes.setOnClickListener(this)
         info_userimage_button.setOnClickListener(this)
+        resume.setOnClickListener(this)
+        see_resume.setOnClickListener(this)
 
         Log.i("username","$username ji")
         val param = no_post.layoutParams as ViewGroup.MarginLayoutParams
@@ -143,6 +155,14 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
 
     }
 
+    override fun onBackPressed() {
+        if(uploading){
+            Toast.makeText(applicationContext,"Uploading!! Please wait",Toast.LENGTH_LONG).show()
+        }else{
+            finish()
+        }
+    }
+
     private fun actAsAEditScreen(userInfo: UserInfoResponse){
         info_username.text = userInfo.username
         info_username2.setText("${userInfo.username}")
@@ -154,6 +174,7 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         bioCount.setText("${userInfo.bio.length}/40")
         nameCount.setText("${userInfo.name.length}/20")
         usernameCount.setText("${userInfo.username.length}/20")
+        if(userInfo.resume.isNotEmpty()) see_resume.visibility = View.VISIBLE
     }
 
     private fun setUserNameInLayout(username:String,info_username:TextView,info_username2:TextView) {
@@ -175,6 +196,12 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                     } else {
                         Toast.makeText(this,"Unable to place image try again!",Toast.LENGTH_LONG).show()
                     }
+                }
+                190->{
+                    uri = data!!.data!!
+                    val src = uri.path
+                    new_resume=1
+                    see_resume.visibility = View.VISIBLE
                 }
             }
         }
@@ -244,6 +271,7 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                 }
                 else{
                     pb = ProgressDialog(this)
+                    uploading =true
                     pb.setTitle("Saving data")
                     pb.setCanceledOnTouchOutside(false)
                     pb.show()
@@ -253,11 +281,9 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                         uploadPost(pb,id!!)
                     }else{
                         if(this::userInfo.isInitialized){
-//                            Log.i("message","this is initialized")
-                            uploader2("",id!!,"",pb)
+                            resumeUploader("",id!!,userInfo.profile_pic,pb)
                         }else{
-                            Log.i("message","this is initialized")
-                            uploader("",id!!,"",pb)
+                            resumeUploader("",id!!,"",pb)
                         }
                     }
                 }
@@ -268,27 +294,82 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
             R.id.info_userimage_button->{
                 launchImageUri()
             }
+            R.id.userinfo_resume->{
+                launchResumeSelector()
+            }
+            R.id.see_resume->{
+                seeResume()
+            }
         }
+    }
+
+    private fun seeResume(){
+        if(new_resume==1){
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.setData(uri)
+            startActivity(intent)
+            if (intent.resolveActivityInfo(packageManager, 0) != null) {
+                startActivity(intent)
+            } else {
+                Log.i("message","unable to load")
+            }
+        }else{
+            val intent =Intent(this,WebView::class.java)
+            intent.putExtra("url",userInfo.resume)
+            startActivity(intent)
+        }
+    }
+
+    private fun launchResumeSelector(){
+        var intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.setType("application/pdf")
+
+        intent = Intent.createChooser(intent, "Choose a file");
+        startActivityForResult(intent, 190);
     }
 
     private fun uploadPost(pb:ProgressDialog,id:String) {
         val cr = getContentResolver()
         val data = imageProcessor().imageProcessor(imageUri,cr,15)
         if(this::userInfo.isInitialized){
-            imageProcessor().imageUploader("",id,"$id/dp",data,pb,::uploader2)
+            imageProcessor().imageUploader("",id,"$id/dp",data,pb,::resumeUploader)
         }else{
-            imageProcessor().imageUploader("",id,"$id/dp",data,pb,::uploader)
+            imageProcessor().imageUploader("",id,"$id/dp",data,pb,::resumeUploader)
         }
     }
-    private fun uploader2(postUUID: String,id: String,uri: String,pb:ProgressDialog){
+
+    public fun resumeUploader(postUUID: String,id: String,downloadUrl: String,pb:ProgressDialog){
+        if(new_resume ==1){
+            val cr =contentResolver
+            val sp = getSharedPreferences("chores",Context.MODE_PRIVATE)
+            val id = sp.getString("id","")
+            if(this::userInfo.isInitialized){
+                ResumeUtils().uploadResume("$id/resume",uri,cr,pb,downloadUrl,::uploader2)
+            }else{
+                ResumeUtils().uploadResume("$id/resume",uri,cr,pb,downloadUrl,::uploader)
+            }
+        }else{
+            if(this::userInfo.isInitialized){
+                uploader2("",pb,downloadUrl)
+            }else{
+                uploader("",pb,downloadUrl)
+            }
+        }
+    }
+
+    private fun uploader2(resume: String,pb:ProgressDialog,profile_pic:String){
         userInfo.name = userinfo_name.text.toString()
         userInfo.website = userinfo_website.text.toString()
         userInfo.bio = userinfo_bio.text.toString()
         userInfo.username = info_username2.text.toString()
         userInfo.pincodes = pincodesArray
-        if(uri.isNotEmpty()){
-            userInfo.profile_pic = uri
+        Log.i("message","$resume  resume")
+        if(profile_pic.isNotEmpty()){
+            userInfo.profile_pic = profile_pic
         }
+        if(resume.isNotEmpty()) userInfo.resume = resume
+
         val sp = this.getSharedPreferences("chores",Context.MODE_PRIVATE)
         val token =  sp.getString("token","")
         val id = sp.getString("id","")
@@ -296,7 +377,8 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         val retrofitData = retrofitBuilder.putUserInfo("$token id $id", userInfo)
         retrofitData.enqueue(object : Callback<String?> {
             override fun onFailure(call: Call<String?>, t: Throwable) {
-//                Toast.makeText(this,"Unable to perform the action",Toast.LENGTH_LONG).show()
+                pb.dismiss()
+                Toast.makeText(applicationContext,"Unable to perform the action",Toast.LENGTH_LONG).show()
             }
 
             override fun onResponse(call: Call<String?>, response: Response<String?>) {
@@ -305,13 +387,12 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                     unauthorized()
                 }
                 else if(response.code()==500){
-                    Log.i("message","HEYYYYIIIII")
 //                    Toast.makeText(this,"Unable to save! :(",Toast.LENGTH_LONG).show()
                 }
                 else{
-                    Log.i("message","HEYYYY")
                     onCloseActivity()
                 }
+                uploading = false
                 pb.dismiss()
             }
         })
@@ -334,13 +415,13 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
         startActivity(intent)
     }
 
-    private fun uploader(postUUID: String, id: String, uri: String, pb: ProgressDialog){
+    private fun uploader(uri: String, pb: ProgressDialog,profile_pic:String){
         val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
         val sharedPreferences = getSharedPreferences("chores", Context.MODE_PRIVATE)
 
         val id = sharedPreferences.getString("id","")
         val token = sharedPreferences.getString("token","")
-        val userInfoJson = UserInfoJson(username,id!!,uri,userinfo_name.text.toString(),pincodesArray,0,0,0.0)
+        val userInfoJson = UserInfoJson(info_username2.text.toString(),id!!,profile_pic,userinfo_name.text.toString(),pincodesArray,0,0,0.0,userinfo_bio.text.toString(),userinfo_website.text.toString(),uri)
         val retrofitData = retrofitBuilder.userInfo("$token id $id",userInfoJson)
 
         retrofitData.enqueue(object : Callback<UserInfoResponse?> {
@@ -353,8 +434,13 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                 call: Call<UserInfoResponse?>,
                 response: Response<UserInfoResponse?>
             ) {
-                if(response.body()!!.error.length==0){
+                if(response.code() == 500){
+                    Toast.makeText(this@UserInfoActivity,"ERROR",Toast.LENGTH_LONG).show()
+                    uploading = false
+                }
+                else if(response.body()!!.error.length==0){
                     pb.dismiss()
+                    uploading = false
                     Toast.makeText(this@UserInfoActivity,"Saved",Toast.LENGTH_LONG).show()
                     val intent = Intent(this@UserInfoActivity,Home::class.java)
                     val body = response.body()!!
@@ -376,6 +462,7 @@ class UserInfoActivity : AppCompatActivity(),View.OnClickListener  {
                         startActivity(intent)
                     }else{
                         pb.dismiss()
+                        uploading = false
                         Log.i("hi o" ,"sading ${response.body()!!.error}")
                         Toast.makeText(this@UserInfoActivity,"Error !!",Toast.LENGTH_LONG).show()
                     }

@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@drawable/stroke1dp_light"
+    android:animateLayoutChanges="true"
+    >
+    <RelativeLayout
+        android:id="@+id/notification"
+        android:layout_width="match_parent"
+        android:paddingHorizontal="15dp"
+        android:paddingVertical="15dp"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+            <androidx.cardview.widget.CardView
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                app:cardCornerRadius="25dp"
+                android:backgroundTint="@color/colorPrimaryDark"
+                >
+                <ImageView
+                    android:id="@+id/noti_profile_pic"
+                    android:layout_width="50dp"
+                    android:layout_height="50dp"
+                    android:src="@drawable/account_border"
+                    />
+            </androidx.cardview.widget.CardView>
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginHorizontal="65dp"
+            android:layout_centerVertical="true"
+            android:layout_height="wrap_content">
+            <TextView
+                android:id="@+id/noti_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Liked your ch211ore sda. Total Likes 169 Liked your chore."
+                android:textColor="@android:color/white"
+                android:textSize="15sp"
+                />
+            <TextView
+                android:id="@+id/noti_time"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 min"
+                android:layout_gravity="end"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="12sp"
+                />
+
+        </LinearLayout>
+
+        <androidx.cardview.widget.CardView
+            android:layout_alignParentRight="true"
+            android:layout_width="50dp"
+            android:layout_height="50dp"
+            app:cardCornerRadius="10dp"
+            android:backgroundTint="@color/colorPrimary"
+            >
+            <ImageView
+                android:id="@+id/noti_pic"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@drawable/ic_outline_image_24"
+                />
+        </androidx.cardview.widget.CardView>
+    </RelativeLayout>
+</LinearLayout>

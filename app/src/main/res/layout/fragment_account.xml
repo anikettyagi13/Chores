@@ -173,31 +173,48 @@
                             <LinearLayout
                                 android:layout_width="match_parent"
                                 android:layout_height="wrap_content"
-                                android:orientation="vertical"
+                                android:orientation="horizontal"
                                 android:layout_marginTop="10dp"
                                 android:background="@drawable/edittext"
                                 android:backgroundTint="@color/colorPrimary"
                                 >
-                                <TextView
-                                    android:id="@+id/userinfo_bio"
-                                    android:layout_width="match_parent"
+                                <LinearLayout
+                                    android:layout_width="0dp"
+                                    android:layout_weight="8"
+                                    android:orientation="vertical"
+                                    android:layout_height="wrap_content">
+                                    <TextView
+                                        android:id="@+id/userinfo_bio"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="21312312312321"
+                                        android:padding="10dp"
+                                        android:textSize="12sp"
+                                        android:textColor="@android:color/white"
+                                        />
+                                    <TextView
+                                        android:id="@+id/userinfo_website"
+                                        android:layout_width="wrap_content"
+                                        android:layout_height="wrap_content"
+                                        android:text="21312312312321"
+                                        android:paddingHorizontal="10dp"
+                                        android:fontFamily="@font/poppins_bold"
+                                        android:textSize="10sp"
+                                        android:paddingBottom="10dp"
+                                        android:textColor="@android:color/holo_blue_dark"
+                                        />
+                                </LinearLayout>
+                                <ImageButton
+                                    android:layout_width="0dp"
                                     android:layout_height="wrap_content"
-                                    android:text="21312312312321"
-                                    android:padding="10dp"
-                                    android:textSize="12sp"
-                                    android:textColor="@android:color/white"
+                                    android:layout_weight="2"
+                                    android:visibility="gone"
+                                    android:src="@drawable/assignment"
+                                    android:layout_gravity="center"
+                                    android:background="@android:color/transparent"
+                                    android:id="@+id/resume"
                                     />
-                                <TextView
-                                    android:id="@+id/userinfo_website"
-                                    android:layout_width="match_parent"
-                                    android:layout_height="wrap_content"
-                                    android:text="21312312312321"
-                                    android:paddingHorizontal="10dp"
-                                    android:fontFamily="@font/poppins_bold"
-                                    android:textSize="10sp"
-                                    android:paddingBottom="10dp"
-                                    android:textColor="@android:color/holo_blue_dark"
-                                    />
+
                             </LinearLayout>
                             <LinearLayout
                                 android:layout_width="match_parent"

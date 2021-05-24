@@ -24,9 +24,19 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".AccountDetails"></activity>
-        <activity android:name=".Post_full_Screen" />
-        <activity android:name=".UserInfoActivity" />
+        <activity android:name=".WebView"></activity>
+        <activity
+            android:name=".AppliedByList"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".AccountDetails"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".Post_full_Screen"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".UserInfoActivity"
+            android:screenOrientation="portrait" />
 
         <meta-data
             android:name="com.google.android.geo.API_KEY"

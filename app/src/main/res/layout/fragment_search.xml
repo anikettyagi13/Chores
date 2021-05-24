@@ -2,12 +2,66 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:animateLayoutChanges="true"
     >
-    <TextView
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="Search"
-        android:gravity="center"
-        />
+        android:orientation="vertical">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_height="wrap_content"
+            android:paddingVertical="10dp"
+            android:background="@drawable/stroke1dp"
+            >
+            <EditText
+                android:id="@+id/search"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_gravity="center"
+                android:drawableRight="@drawable/search"
+                android:background="@drawable/edittext_border"
+                android:layout_marginHorizontal="20dp"
+                android:paddingHorizontal="20dp"
+                android:paddingVertical="10dp"
+                android:hint="Search"
+                android:imeOptions="actionSearch"
+                android:inputType="text"
+                android:textColorHint="@android:color/darker_gray"
+                android:textColor="@android:color/white"
+                />
+        </LinearLayout>
+        <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/search_refresh"
+            android:background="@color/colorPrimaryDark"
+            android:layout_marginBottom="50dp"
+            >
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                >
+                <androidx.recyclerview.widget.RecyclerView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/search_global"
+                    />
+                <ProgressBar
+                    style="?android:attr/progressBarStyleLarge"
+                    android:layout_width="wrap_content"
+                    android:progressDrawable="@drawable/probress_bar"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:id="@+id/pbSearch"
+                    android:layout_gravity="center"
+                    />
+            </LinearLayout>
+
+        </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

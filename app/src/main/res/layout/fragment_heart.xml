@@ -2,12 +2,64 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    >
-    <TextView
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/colorPrimaryDark"
+    android:orientation="vertical">
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Heart"
-        android:gravity="center"
-        />
+        android:orientation="vertical"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:background="@drawable/stroke1dp"
+            android:layout_height="50dp">
+            <TextView
+                android:id="@+id/noti"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="Notification"
+                android:textSize="24sp"
+                android:fontFamily="@font/poppins_light"
+                android:textColor="@android:color/white"
+                android:gravity="center"
+                />
+        </LinearLayout>
+            <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
+                android:layout_width="match_parent"
+                android:layout_marginBottom="50dp"
+                android:id="@+id/notifications_swipe"
+                android:layout_height="wrap_content">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:orientation="vertical"
+                    android:layout_height="wrap_content">
+                        <androidx.recyclerview.widget.RecyclerView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/notifications"
+                            app:layout_behavior="@string/appbar_scrolling_view_behavior"
+                            />
+                    <LinearLayout
+                        android:id="@+id/pBar_noti"
+                        android:visibility="gone"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content" android:background="@color/colorPrimaryDark"
+                        android:layout_gravity="center"
+                        android:gravity="center"
+                        >
+                        <ProgressBar
+                            style="?android:attr/progressBarStyleLarge"
+                            android:layout_width="wrap_content"
+                            android:progressDrawable="@drawable/probress_bar"
+                            android:layout_height="wrap_content"
+                            android:gravity="center"
+                            >
+                        </ProgressBar>
+                    </LinearLayout>
+                </LinearLayout>
+
+            </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
+
+    </LinearLayout>
 
 </FrameLayout>

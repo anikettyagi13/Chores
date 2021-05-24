@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,24 +8,28 @@
     android:gravity="center"
     android:orientation="vertical"
     >
-    <FrameLayout
-        android:id="@+id/fragment"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_height="match_parent">
+        <FrameLayout
+            android:id="@+id/fragment"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottom"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_alignParentBottom="true"
-        app:menu="@menu/bottomnavigationmenu"
-        app:labelVisibilityMode="unlabeled"
-        app:itemIconTint="@android:color/white"
-        app:itemTextColor="@android:color/white"
-        android:background="@color/colorPrimaryDark"
+        <com.google.android.material.bottomnavigation.BottomNavigationView
+            android:id="@+id/bottom"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_alignParentBottom="true"
+            app:menu="@menu/bottomnavigationmenu"
 
-        />
+            app:labelVisibilityMode="unlabeled"
+            app:itemIconTint="@drawable/bottom_navigation_icon_color"
+            app:itemTextColor="@android:color/darker_gray"
+            android:background="@drawable/stroke1dptop"
+            />
+    </RelativeLayout>
+    <include layout="@layout/apply_on_post" android:id="@+id/bottom_sheet_apply"/>
 
-
-</RelativeLayout>
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

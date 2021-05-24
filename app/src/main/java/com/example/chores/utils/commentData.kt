@@ -8,6 +8,5 @@ data class commentData(val post_id:String
                           ,val comment:String
                           ,val time:Long
                           ,var likes:Int
-                          ,val created:String
                           ,var liked:Boolean
 )

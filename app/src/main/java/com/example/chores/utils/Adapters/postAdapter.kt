@@ -1,5 +1,6 @@
-package com.example.chores.utils
+package com.example.chores.utils.Adapters
 
+import android.text.format.DateUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -13,9 +14,13 @@ import com.bumptech.glide.Glide
 import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.R
 import com.example.chores.utils.ClickListeners.postClickListener
+import com.example.chores.utils.postData
+import com.google.android.flexbox.FlexboxLayout
+import kotlinx.android.synthetic.main.fragment_add.*
+import kotlinx.android.synthetic.main.posts.*
 
 
-class postAdapter(val postsList:List<postData>, val postClickListener: postClickListener, val userData:UserInfoResponse): RecyclerView.Adapter<postAdapter.myAdapter>(){
+class postAdapter(val postsList:List<postData>, val postClickListener: postClickListener, val userData:UserInfoResponse,val search:Boolean): RecyclerView.Adapter<postAdapter.myAdapter>(){
     public class myAdapter(view: View):RecyclerView.ViewHolder(view){
         val post_userImage: ImageView = view.findViewById(R.id.posts_userImage)
         val username:TextView = view.findViewById(R.id.posts_username)
@@ -36,9 +41,22 @@ class postAdapter(val postsList:List<postData>, val postClickListener: postClick
         val add_comment:ImageButton = view.findViewById(R.id.add_comment)
         val commentUsername:TextView = view.findViewById(R.id.post_comment_username)
         val apply_image:ImageView = view.findViewById(R.id.applyImage)
+        val global :ImageView =view.findViewById(R.id.global)
+        val apply_image1:RelativeLayout= view.findViewById(R.id.applyImage1)
         val post_info_show_more:TextView = view.findViewById(R.id.post_info_show_more)
+        var applied: TextView = view.findViewById(R.id.applied)
+        val rejected :RelativeLayout= view.findViewById(R.id.rejected)
+        val assigned :RelativeLayout= view.findViewById(R.id.assigned)
+        val waiting :RelativeLayout= view.findViewById(R.id.waiting)
+        val post_more :ImageButton = view.findViewById(R.id.post_more)
+        val tags:FlexboxLayout = view.findViewById(R.id.tags)
+        val tag1:TextView = view.findViewById(R.id.tag1)
+        val tag2:TextView = view.findViewById(R.id.tag2)
+        val tag3:TextView = view.findViewById(R.id.tag3)
+        val tag4:TextView = view.findViewById(R.id.tag4)
+        val tag5:TextView = view.findViewById(R.id.tag5)
     }
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): postAdapter.myAdapter {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): myAdapter {
         val itemView = LayoutInflater.from(parent.context)
             .inflate(R.layout.posts,parent,false)
         return myAdapter(itemView)
@@ -48,15 +66,51 @@ class postAdapter(val postsList:List<postData>, val postClickListener: postClick
         return postsList.size
     }
     @RequiresApi(21)
-    override fun onBindViewHolder(holder: postAdapter.myAdapter, position: Int) {
+    override fun onBindViewHolder(holder: myAdapter, position: Int) {
         holder.username.text = postsList[position].username
-        Glide.with(holder.posts_image.getContext()).load(postsList[position].url).placeholder(R.drawable.ic_outline_image_24)
+        Glide.with(holder.posts_image.getContext()).load(postsList[position].url)
             .into(holder.posts_image)
 
         Glide.with(holder.post_userImage.getContext()).load(postsList[position].profile_pic).placeholder(R.drawable.account_border).into(holder.post_userImage)
         Glide.with(holder.apply_image.getContext()).load(userData.profile_pic).placeholder(R.drawable.account_border).into(holder.apply_image)
         holder.price_tag.text = postsList[position].price_tag
-        holder.pincode.text = postsList[position].pincode
+
+        if(postsList[position].address == "GLOBAL"){
+            holder.global.visibility =View.VISIBLE
+            holder.pincode.visibility = View.GONE
+        }
+        else{
+            holder.global.visibility =View.GONE
+            holder.pincode.visibility = View.VISIBLE
+            holder.pincode.text = postsList[position].pincode
+        }
+
+        if(search){
+            if(postsList[position].tag1 !="null"&& postsList[position].tag1 != ""){
+                holder.tags.visibility =View.VISIBLE
+                holder.tag1.visibility = View.VISIBLE
+                holder.tag1.text = postsList[position].tag1
+            }
+            if(postsList[position].tag2 !="null"&& postsList[position].tag2 != ""){
+                holder.tag2.visibility = View.VISIBLE
+                holder.tag2.text = postsList[position].tag2
+            }
+            if(postsList[position].tag3 !="null" && postsList[position].tag3 != ""){
+                holder.tag3.visibility = View.VISIBLE
+                holder.tag3.text = postsList[position].tag3
+            }
+            if(postsList[position].tag4 !="null"&& postsList[position].tag4 != ""){
+                holder.tag4.visibility = View.VISIBLE
+                holder.tag4.text = postsList[position].tag4
+            }
+            if(postsList[position].tag5 !="null"&& postsList[position].tag5 != ""){
+                holder.tag5.visibility = View.VISIBLE
+                holder.tag5.text = postsList[position].tag5
+            }
+        }else{
+            holder.tags.visibility = View.GONE
+        }
+
         if(postsList[position].info.length>20){
             holder.posts_info.text = postsList[position].info.substring(0,20) + " ..."
             holder.post_info_show_more.visibility = VISIBLE
@@ -65,9 +119,61 @@ class postAdapter(val postsList:List<postData>, val postClickListener: postClick
         }
         holder.posts_exact_location.text = postsList[position].address
         holder.username2.text = postsList[position].username
-        holder.posts_created.text = postsList[position].created
+        holder.posts_created.text = DateUtils.getRelativeTimeSpanString(postsList[position].time)
         holder.post_likes.text = postsList[position].likes.toString()
         holder.post_comments.text = postsList[position].comments.toString()
+        holder.applied.text = postsList[position].applied.toString()
+        if(userData.user_id == ""){
+            holder.apply_image1.visibility = View.GONE
+            holder.waiting.visibility = View.GONE
+            holder.assigned.visibility = View.GONE
+            holder.rejected.visibility  =View.GONE
+            holder.assigned.visibility = View.GONE
+        }else{
+            if(userData.user_id == postsList[position].user_id){
+                holder.apply_image1.visibility = View.GONE
+                holder.post_more.visibility = View.VISIBLE
+                holder.post_more.setOnClickListener {
+                    postClickListener.showMenu(position,holder.post_more)
+                }
+            }else{
+                if(postsList[position].status == "rejected"){
+                    holder.rejected.visibility = View.VISIBLE
+                    holder.apply_image1.visibility = View.GONE
+                    holder.waiting.visibility = View.GONE
+                    holder.assigned.visibility = View.GONE
+                    holder.rejected.setOnClickListener {
+                        postClickListener.applyOnPost(position)
+                    }
+                }else if(postsList[position].status == "waiting"){
+                    holder.waiting.visibility = View.VISIBLE
+                    holder.apply_image1.visibility = View.GONE
+                    holder.rejected.visibility  =View.GONE
+                    holder.assigned.visibility = View.GONE
+                    holder.waiting.setOnClickListener {
+                        postClickListener.applyOnPost(position)
+                    }
+                }else if(postsList[position].status == "assigned"){
+                    holder.assigned.visibility = View.VISIBLE
+                    holder.apply_image1.visibility = View.GONE
+                    holder.rejected.visibility = View.GONE
+                    holder.waiting.visibility = View.GONE
+                    holder.assigned.setOnClickListener {
+                        postClickListener.applyOnPost(position)
+                    }
+                }else{
+                    holder.apply_image1.visibility = View.VISIBLE
+                    holder.assigned.visibility = View.GONE
+                    holder.waiting.visibility=View.GONE
+                    holder.rejected.visibility = View.GONE
+                    holder.apply_image.setOnClickListener {
+                        postClickListener.applyOnPost(position)
+                    }
+                }
+
+            }
+
+        }
 
         if(postsList[position].liked){
             holder.post_like.setImageDrawable(ContextCompat.getDrawable(holder.post_like.context, R.drawable.liked));
@@ -87,6 +193,12 @@ class postAdapter(val postsList:List<postData>, val postClickListener: postClick
         }
         holder.username.setOnClickListener{
          postClickListener.userNameClick(position)
+        }
+        holder.username2.setOnClickListener{
+            postClickListener.userNameClick(position)
+        }
+        holder.post_userImage.setOnClickListener {
+            postClickListener.userNameClick(position)
         }
         holder.itemView.setOnClickListener{
             postClickListener.postClick(position)

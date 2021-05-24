@@ -4,11 +4,13 @@ import android.content.Context
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.Fragment
 import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.Fragment.*
 import com.example.chores.utils.userInfoInterface
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import kotlinx.android.synthetic.main.activity_home.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -17,6 +19,7 @@ import java.io.Serializable
 
 class Home : AppCompatActivity(),Serializable,userInfoInterface {
     lateinit var userInfo:UserInfoResponse
+    var home = true
     override fun onCreate(savedInstanceState: Bundle?) {
         val HomeFragment = HomeFragment()
         val HeartFragment = HeartFragment()
@@ -26,22 +29,30 @@ class Home : AppCompatActivity(),Serializable,userInfoInterface {
 
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_home)
+        val view : View = findViewById(R.id.bottom_sheet_apply)
+        val bottomSheetBehavior = BottomSheetBehavior.from(view)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
         bottom.setOnNavigationItemSelectedListener {
             when(it.itemId){
                 R.id.home ->{
                     setCurrentFragment(HomeFragment)
+                    home = true
                 }
                 R.id.search ->{
                     setCurrentFragment(SearchFragment)
+                    home=false
                 }
                 R.id.add ->{
                     setCurrentFragment(AddFragment)
+                    home=false
                 }
                 R.id.heart ->{
                     setCurrentFragment(HeartFragment)
+                    home=false
                 }
                 R.id.account ->{
                     setCurrentFragment(AccountFragment)
+                    home=false
                 }
             }
             true
@@ -69,6 +80,14 @@ class Home : AppCompatActivity(),Serializable,userInfoInterface {
         })
     }
 
+    override fun onBackPressed() {
+        if(home){
+            finish()
+        }else{
+            setCurrentFragment(HomeFragment())
+            home =true
+        }
+    }
     private fun setCurrentFragment(fragment:Fragment){
         supportFragmentManager.beginTransaction().apply {
             replace(R.id.fragment,fragment)

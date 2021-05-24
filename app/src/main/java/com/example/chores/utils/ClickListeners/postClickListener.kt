@@ -13,4 +13,7 @@ interface postClickListener {
     fun disLikeCLick(position:Int)
     fun addCommentClick(position:Int,comment:String,comment_write:EditText,comment_view:LinearLayout)
     fun comment(position:Int,username: TextView)
+    fun applyOnPost(position: Int)
+    fun showMenu(position:Int,post_more:View)
+    fun showTags(position: Int)
 }

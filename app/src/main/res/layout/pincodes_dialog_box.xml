@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:background="@drawable/dialog_background"
+    android:animateLayoutChanges="true"
     >
 
     <TextView
@@ -65,33 +66,36 @@
         android:textSize="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_post_edittext"
+        android:background="@drawable/edittext_border"
         android:layout_margin="10dp"
         android:padding = "16dp"
         android:hint="Pincode-1"
-        android:textColorHint="@android:color/white"
+        android:textColorHint="@android:color/darker_gray"
+        android:textColor="@android:color/white"
         />
     <EditText
         android:id="@+id/info_pincode2"
         android:textSize="12dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_post_edittext"
+        android:background="@drawable/edittext_border"
         android:layout_margin="10dp"
         android:padding = "16dp"
         android:hint="Pincode-2"
-        android:textColorHint="@android:color/white"
+        android:textColorHint="@android:color/darker_gray"
+        android:textColor="@android:color/white"
         />
     <EditText
         android:id="@+id/info_pincode3"
         android:textSize="12sp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@drawable/add_post_edittext"
+        android:background="@drawable/edittext_border"
         android:layout_margin="10dp"
         android:padding = "16dp"
         android:hint="Pincode-3"
-        android:textColorHint="@android:color/white"
+        android:textColorHint="@android:color/darker_gray"
+        android:textColor="@android:color/white"
         />
     <RelativeLayout
         android:layout_width="match_parent"

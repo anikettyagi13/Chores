@@ -14,4 +14,4 @@ data class UserInfoResponse(var name:String,
                             val user_id:String,
                             var bio:String,
                             var website:String,
-                            val error:String): Serializable
+                            val error:String,var resume:String): Serializable

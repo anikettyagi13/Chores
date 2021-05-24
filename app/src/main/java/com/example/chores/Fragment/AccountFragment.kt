@@ -9,15 +9,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.text.format.DateUtils
 import android.util.DisplayMetrics
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.EditText
-import android.widget.LinearLayout
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.widget.NestedScrollView
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -28,11 +26,16 @@ import com.example.chores.Api.Json.UserInfoResponse
 import com.example.chores.Api.Json.timeInfoAndUserId
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.utils.*
+import com.example.chores.utils.Adapters.QuestionAnswerAdapter
+import com.example.chores.utils.Adapters.postAdapter
 import com.example.chores.utils.ClickListeners.postClickListener
+import com.example.chores.utils.ClickListeners.questionAnswerClickListener
 import com.example.chores.utils.usefullFunctions.CommentRelated
 import com.example.chores.utils.usefullFunctions.PostRelated
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.theartofdev.edmodo.cropper.CropImage
 import com.theartofdev.edmodo.cropper.CropImageView
+import kotlinx.android.synthetic.main.apply_on_post.view.*
 import kotlinx.android.synthetic.main.dialog_location_picker.view.accept
 import kotlinx.android.synthetic.main.dialog_location_picker.view.decline
 import kotlinx.android.synthetic.main.fragment_account.*
@@ -44,9 +47,12 @@ import retrofit2.Response
 
 
 class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
-    postClickListener, userInterface {
+    postClickListener, userInterface,questionAnswerClickListener {
     var postList = ArrayList<postData>()
     lateinit var postsAdapter: postAdapter
+    var new_resume = 0;
+    lateinit var uri_resume:Uri
+    var uploading = false
     private var userInfo:UserInfoResponse = UserInfoResponse("",
     "",
     "",
@@ -57,11 +63,13 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
     "",
     "",
     "",
-    "")
+    "","")
     val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
     var millis:Long = System.currentTimeMillis()/1000
     var loading = true
     lateinit var imageUri : Uri
+    lateinit var AnswersArray:ArrayList<String>
+    lateinit var QuestionAnswerAdapter:QuestionAnswerAdapter
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -95,18 +103,21 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
         fragment!!.userinfo_name.text = userInfo.name
         fragment!!.info_username2.text = userInfo.username
         fragment!!.userinfo_bio.text = userInfo.bio
-        Log.i("message","etxt ${userInfo.website.isNullOrBlank()}")
+        if(userInfo.resume.isNotEmpty()) fragment!!.resume.visibility = View.VISIBLE
+        fragment!!.resume.setOnClickListener {
+            val intent = Intent(context!!,WebView::class.java)
+            intent.putExtra("url",userInfo.resume)
+            startActivity(intent)
+        }
+
         if(userInfo.website.isNullOrBlank()){
             fragment.userinfo_website.visibility = View.GONE
         }else{
             if(userInfo.website.indexOf("https")!=-1) fragment!!.userinfo_website.text = "${userInfo.website.substringAfter("https://","chores.com/").substringBefore("/")}"
             else fragment!!.userinfo_website.text = "${userInfo.website.substringAfter("http://","chores.com/").substringBefore("/")}"
             fragment.userinfo_website.setOnClickListener {
-                Log.i("message","open")
                 var url = userInfo.website
-                val browserIntent =
-                    Intent(Intent.ACTION_VIEW, Uri.parse(url))
-                Log.i("message","${userInfo.website}")
+                val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
                 startActivity(browserIntent)
             }
         }
@@ -128,7 +139,12 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
          OpenPincodesDialogBox()
         }
         var recyclerView :RecyclerView = fragment.findViewById(R.id.user_posts)
-        postsAdapter = postAdapter(postList,this,userInfo)
+        postsAdapter = postAdapter(
+            postList,
+            this,
+            userInfo,
+            false
+        )
         recyclerView.adapter = postsAdapter
         val layoutManager = LinearLayoutManager(activity!!.applicationContext)
         recyclerView.layoutManager = layoutManager
@@ -158,6 +174,9 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
         }
     }
 
+    override fun showTags(position: Int) {
+    }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         if(resultCode!= RESULT_CANCELED){
             Log.i("message","hiijaidjskdalsadlkmsdmkasd $requestCode")
@@ -181,8 +200,8 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
                     }
                 }
                 151->{
-                    if(data!!.getParcelableExtra<postData>("postData")!=null){
-                    val post = data!!.getParcelableExtra<postData>("postData")!!
+                    if(data!!.getSerializableExtra("postData")!=null){
+                    val post = data!!.getSerializableExtra("postData")as postData
                     Log.i("message hii","${post}")
                     val position = data!!.getIntExtra("position",0)
                     postList[position] = post
@@ -196,6 +215,10 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
                         userInfo = user
                         userInfoInterface.changeUserInfo(user)
                     }
+                }
+                190->{
+                    uri_resume = data!!.data!!
+                    new_resume=1
                 }
 
             }
@@ -270,22 +293,6 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
                 if(i==2) dialogView.show_pincode3.setText(userInfo.pincodes[i])
             }
         }
-//        dialogView.accept.setOnClickListener{
-//            if(dialogView.info_pincode1.text.length>=3 && dialogView.info_pincode1.text.length<=16 && dialogView.info_pincode2.text.length>=3 && dialogView.info_pincode2.text.length<=16 && dialogView.info_pincode3.text.length>=3 && dialogView.info_pincode3.text.length<=16){
-//                userInfo.pincodes[0]= dialogView.info_pincode1.text.toString()
-//                userInfo.pincodes[1]=dialogView.info_pincode2.text.toString()
-//                userInfo.pincodes[2] = dialogView.info_pincode3.text.toString()
-//                AlertDialog.dismiss()
-//                updateFunction()
-//                Log.i("message","${userInfo.pincodes}")
-//            }else{
-//                if(dialogView.info_pincode1.text.length<3 || dialogView.info_pincode1.text.length>16 || dialogView.info_pincode2.text.length<3 && dialogView.info_pincode2.text.length>16 || dialogView.info_pincode3.text.length<3 || dialogView.info_pincode3.text.length>16){
-//                    dialogView.info_error.setText("Pincodes are allowed to be of length between 3 to 16")
-//                }else{
-//                    dialogView.info_error.setText("Every field is required*")
-//                }
-//            }
-//        }
         AlertDialog.setView(dialogView);
         AlertDialog.show();
     }
@@ -307,11 +314,9 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
                     unauthorized()
                 }
                 else if(response.code()==500){
-                    Log.i("message","HEYYYYIIIII")
                     Toast.makeText(context,"Unable to save! :(",Toast.LENGTH_LONG).show()
                 }
                 else{
-                    Log.i("message","HEYYYY")
 //                    userInfoInterface.changeUserInfo(userInfo)
                 }
             }
@@ -367,9 +372,34 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
         })
     }
 
+    override fun showMenu(position: Int,post_more:View) {
+        val popupMenu = PopupMenu(context!!,post_more)
+        popupMenu.menuInflater.inflate(R.menu.post_menu,popupMenu.menu)
+        popupMenu.setOnMenuItemClickListener {
+            when(it.itemId){
+                R.id.edit_post->{
+                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
+                }
+                R.id.delete->{
+                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
+                }
+                R.id.applied_by->{
+                    val intent = Intent(context!!,AppliedByList::class.java)
+                    intent.putExtra("post_id",postList[position].post_id)
+                    intent.putExtra("postInfo",postList[position])
+                    startActivity(intent)
+                }
+            }
+            true
+        }
+        popupMenu.show()
+
+    }
+
     override fun userNameClick(position: Int) {
         val intent = Intent(activity!!, AccountDetails::class.java)
         intent.putExtra("userId",postList[position].user_id)
+        intent.putExtra("selfInfo",userInfo)
         startActivity(intent)
     }
 
@@ -396,11 +426,128 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
         comment_write: EditText,
         comment_view: LinearLayout
     ) {
-        CommentRelated().likeComment(context!!,postList[position],userInfo,comment,comment_write,comment_view)
+        CommentRelated().AddComment(context!!,postList[position],userInfo,comment,comment_write,comment_view)
     }
 
     override fun comment(position: Int, username: TextView) {
         username.text = userInfo.username
+    }
+
+
+    public fun choose_resume(layout:View){
+        var intent = Intent(Intent.ACTION_GET_CONTENT)
+        intent.setType("application/pdf")
+        intent = Intent.createChooser(intent, "Choose a file");
+        startActivityForResult(intent,190)
+        layout.see_resume.visibility = View.VISIBLE
+        layout.see_resume.setOnClickListener {
+            seeResume()
+        }
+    }
+
+    public fun seeResume(){
+        if(new_resume==1){
+            val intent = Intent(Intent.ACTION_VIEW)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.setData(uri_resume)
+            startActivity(intent)
+        }else{
+            val intent =Intent(context!!,WebView::class.java)
+            intent.putExtra("url",userInfo.resume)
+            startActivity(intent)
+        }
+    }
+
+    fun getResume():Uri{
+        return uri_resume
+    }
+
+    fun resumeChoosed():Int{
+        return new_resume
+    }
+    fun set_uploading(up:Boolean){
+        uploading = up
+    }
+
+    override fun applyOnPost(position: Int) {
+        val layout: View = activity!!.findViewById(R.id.bottom_sheet_apply)
+        val bottomSheetBehavior = BottomSheetBehavior.from(layout)
+        bottomSheetBehavior.setBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+                if(uploading) bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+            }
+
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+            }
+        })
+        if(postList[position].resume){
+            if(postList[position].status!="false"){
+            layout.resume_choose.visibility = View.GONE
+        }else{
+            layout.resume_choose.visibility = View.VISIBLE
+            if(userInfo.resume.isNotEmpty()){
+                layout.see_resume.visibility = View.VISIBLE
+                layout.see_resume.setOnClickListener {
+                    seeResume()
+                }
+            }
+        }
+        }else{
+            layout.resume_choose.visibility = View.GONE
+        }
+        PostRelated().applyOnPost(context!!,postList[position],userInfo,this,layout,bottomSheetBehavior,postsAdapter,::questionsView,::sendAnswers,::choose_resume,::getResume,::resumeChoosed,::set_uploading)
+    }
+
+    private fun sendAnswers():ArrayList<String>{
+        return AnswersArray
+    }
+
+    private fun questionsView(layout: View,post:postData) {
+        val recyclerView = layout.questionsAnswer_recycler_view!!
+        if(post.status =="false"){
+            QuestionAnswerAdapter = QuestionAnswerAdapter(post.questions,true,this,ArrayList<String>())
+            if(this::AnswersArray.isInitialized) AnswersArray.clear()
+            else AnswersArray = ArrayList<String>()
+            for(i in 0..(post.questions.size-1)) AnswersArray.add("")
+            recyclerView.adapter = QuestionAnswerAdapter
+            val layoutManager = LinearLayoutManager(this.context)
+            recyclerView.layoutManager = layoutManager
+            recyclerView.isNestedScrollingEnabled = false
+        }else{
+            layout.pBar_answers.visibility = View.VISIBLE
+            layout.questionsAnswer_recycler_view.visibility =View.GONE
+            val sp = context!!.getSharedPreferences("chores",Context.MODE_PRIVATE)
+            val token = sp.getString("token","")!!
+            val id = sp.getString("id","")!!
+            val retrofitData = retrofitBuilder.getAnswers("${token} id ${id}",post.post_id)
+            retrofitData.enqueue(object : Callback<ArrayList<String>?> {
+                override fun onFailure(call: Call<ArrayList<String>?>, t: Throwable) {
+                    Toast.makeText(context!!,"Internet Connection Required!",Toast.LENGTH_LONG).show()
+                }
+
+                override fun onResponse(
+                    call: Call<ArrayList<String>?>,
+                    response: Response<ArrayList<String>?>
+                ) {
+                    if(response.isSuccessful){
+                        QuestionAnswerAdapter = QuestionAnswerAdapter(post.questions,false,this@AccountFragment,response.body()!!)
+                        layout.pBar_answers.visibility = View.GONE
+                        layout.questionsAnswer_recycler_view.visibility =View.VISIBLE
+                        recyclerView.adapter = QuestionAnswerAdapter
+                        val layoutManager = LinearLayoutManager(this@AccountFragment.context)
+                        recyclerView.layoutManager = layoutManager
+                        recyclerView.isNestedScrollingEnabled = false
+                    }else{
+                        if(response.code() == 401) unauthorized()
+                        else Toast.makeText(context!!,"Error! Try Again Later",Toast.LENGTH_LONG).show()
+                    }
+                }
+            })
+        }
+    }
+    
+    override fun changeAnswer(position: Int, answer: String) {
+        AnswersArray[position] = answer
     }
 
     override fun unauthorized() {

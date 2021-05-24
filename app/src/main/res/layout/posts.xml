@@ -2,7 +2,9 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    xmlns:app="http://schemas.android.com/apk/res-auto">
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:animateLayoutChanges="true"
+    >
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -14,21 +16,20 @@
             android:layout_height="wrap_content"
             android:padding="20dp"
             >
-            <androidx.cardview.widget.CardView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                app:cardCornerRadius="100dp"
-                android:backgroundTint="@color/colorPrimary"
-                >
-                <ImageView
-                    android:id="@+id/posts_userImage"
-                    android:layout_width="50dp"
-                    android:layout_height="50dp"
-                    android:background="@drawable/icon_image"
-                    android:src="@drawable/profile_drawable"
-                    android:backgroundTint="@color/colorPrimary"
-                    />
-            </androidx.cardview.widget.CardView>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="wrap_content"
+                    app:cardCornerRadius="25dp"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    android:layout_height="wrap_content">
+                    <ImageView
+                        android:id="@+id/posts_userImage"
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:src="@drawable/account_border"
+                        android:backgroundTint="@color/colorPrimary"
+                        />
+                </androidx.cardview.widget.CardView>
+
 
             <RelativeLayout
                 android:id="@+id/userInfo"
@@ -62,7 +63,15 @@
                     android:textSize="12dp"
                     />
             </RelativeLayout>
-
+            <ImageView
+                android:id="@+id/global"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/earth_selected"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:visibility="gone"
+                />
             <TextView
                 android:gravity="center_vertical"
                 android:id="@+id/posts_pincode"
@@ -183,6 +192,119 @@
             </LinearLayout>
 
         </LinearLayout>
+<!--        <com.google.android.material.chip.ChipGroup-->
+<!--            android:layout_width="wrap_content"-->
+<!--            android:layout_height="wrap_content">-->
+<!--            <com.google.android.material.chip.Chip-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="1dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:text="123"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:background="@color/colorPrimary"-->
+<!--                />-->
+<!--            <com.google.android.material.chip.Chip-->
+<!--                android:layout_width="wrap_content"-->
+<!--                android:layout_height="wrap_content"-->
+<!--                android:padding="1dp"-->
+<!--                android:textSize="12sp"-->
+<!--                android:text="123"-->
+<!--                android:textColor="@android:color/white"-->
+<!--                android:background="@color/colorPrimary"-->
+<!--                />-->
+<!--        </com.google.android.material.chip.ChipGroup>-->
+
+
+        <com.google.android.flexbox.FlexboxLayout
+            android:id="@+id/tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:flexWrap="wrap"
+            android:visibility="gone"
+            app:alignItems="stretch"
+            app:alignContent="stretch"
+            android:orientation="horizontal"
+            android:layout_marginHorizontal="20dp"
+            android:layout_marginVertical="10dp"
+            >
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/tag1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:text="212312312"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
+                android:paddingVertical="3dp"
+                android:paddingHorizontal="5dp"
+                android:background="@drawable/tags"
+                />
+            <TextView
+                android:id="@+id/tag2"
+                android:visibility="gone"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:text="212312312"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
+                android:paddingVertical="3dp"
+                android:paddingHorizontal="5dp"
+                android:background="@drawable/tags"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:visibility="gone"
+                android:id="@+id/tag3"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:text="212312312"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
+                android:paddingVertical="3dp"
+                android:paddingHorizontal="5dp"
+                android:background="@drawable/tags"
+                />
+            <TextView
+                android:id="@+id/tag4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:text="212312312"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:textSize="10sp"
+                android:textColor="@android:color/darker_gray"
+                android:paddingVertical="3dp"
+                android:paddingHorizontal="5dp"
+                android:background="@drawable/tags"
+                />
+            <TextView
+                android:id="@+id/tag5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="2123123"
+                android:visibility="gone"
+                android:textSize="10sp"
+                android:layout_marginHorizontal="4dp"
+                android:layout_marginVertical="4dp"
+                android:textColor="@android:color/darker_gray"
+                android:paddingVertical="3dp"
+                android:paddingHorizontal="5dp"
+                android:background="@drawable/tags"
+                />
+
+        </com.google.android.flexbox.FlexboxLayout>
+
+
+
+
+
         <TextView
             android:id="@+id/posts_created"
             android:layout_marginTop="5dp"
@@ -254,16 +376,29 @@
                     />
 
             </LinearLayout>
+
+
+            <ImageButton
+                android:id="@+id/post_more"
+                android:layout_marginRight="5dp"
+                android:layout_alignParentRight="true"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/more"
+                android:visibility="gone"
+                android:background="@color/colorPrimaryDark"
+                />
             <RelativeLayout
                 android:layout_width="40sp"
                 android:layout_alignParentRight="true"
                 android:background="@drawable/circular_stroke"
+                android:id="@+id/applyImage1"
                 android:layout_height="40sp">
                 <androidx.cardview.widget.CardView
                     android:layout_width="30sp"
                     android:layout_height="30sp"
                     android:layout_centerInParent="true"
-                    app:cardCornerRadius="100dp"
+                    app:cardCornerRadius="15dp"
                     android:background="@color/colorPrimaryDark"
                     android:backgroundTint="@color/colorPrimaryDark"
                     >
@@ -276,7 +411,87 @@
                 </androidx.cardview.widget.CardView>
 
             </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="40sp"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"
+                android:id="@+id/rejected"
+                android:layout_height="40sp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:layout_centerInParent="true"
+                    app:cardCornerRadius="15dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    >
+                    <ImageView
+                        android:layout_width="30sp"
+                        android:layout_height="30sp"
+                        android:src="@drawable/sad"
+                        />
+                </androidx.cardview.widget.CardView>
+
             </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="40sp"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"
+                android:id="@+id/waiting"
+                android:layout_height="40sp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:layout_centerInParent="true"
+                    app:cardCornerRadius="15dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    >
+                    <ImageView
+                        android:layout_width="30sp"
+                        android:layout_height="30sp"
+                        android:src="@drawable/waiting"
+                        />
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="40sp"
+                android:layout_alignParentRight="true"
+                android:visibility="gone"
+                android:id="@+id/assigned"
+                android:layout_height="40sp">
+                <androidx.cardview.widget.CardView
+                    android:layout_width="30sp"
+                    android:layout_height="30sp"
+                    android:layout_centerInParent="true"
+                    app:cardCornerRadius="15dp"
+                    android:background="@color/colorPrimaryDark"
+                    android:backgroundTint="@color/colorPrimaryDark"
+                    >
+                    <ImageView
+                        android:layout_width="30sp"
+                        android:layout_height="30sp"
+                        android:src="@drawable/happy"
+                        />
+                </androidx.cardview.widget.CardView>
+
+            </RelativeLayout>
+
+
+            <TextView
+                android:id="@+id/applied"
+                android:layout_width="40sp"
+                android:layout_height="wrap_content"
+                android:text="120"
+                android:textColor="@android:color/darker_gray"
+                android:textSize="11sp"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="40dp"
+                android:gravity="center"
+                android:elevation="10dp"
+                />
+            </RelativeLayout>\
         <LinearLayout
             android:id="@+id/comment_view"
             android:layout_width="match_parent"
@@ -310,6 +525,8 @@
                     android:layout_marginHorizontal="20dp"
                     android:layout_marginBottom="10dp"
                     android:hint="comment"
+                    android:textColorHint="@android:color/darker_gray"
+                    android:textColor="@android:color/white"
                     android:textSize="14dp"
                     android:layout_marginTop="8dp"
                     android:backgroundTint="@color/colorPrimary"

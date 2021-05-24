@@ -10,5 +10,4 @@ data class CommentAddJson(val post_id:String
                      ,val comment:String
                      ,val time:Long
                      ,val likes:Int
-                     ,val created:String
 )
