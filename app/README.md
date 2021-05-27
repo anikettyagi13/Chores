@@ -1,19 +1,18 @@
 # CHORES
---
+---
 ## INTRODUCTION
---
+---
 This is a new social networking application :computer: , to provide users a way to earn some extra bucks :moneybag:.
 Users will be able to find tasks(chores) :memo: of their liking, near them. Which they could then apply on by answering some questions/resume :question: as asked by the creator of that chore.
 This application will give work to the person needing it, and will take the load of the creator's (creator of the task) mind.
 
---
+---
 ## Preview of the app-:
+![Preview](https://github.com/anikettyagi13/Chores/blob/master/assests_readme/preview.mp4)
 
---
+---
 
 I am proud to ask for some of the brilliant minds :heart_eyes: out there, to come let's build this project together :relaxed:.
-
---
 
 ## SETUP
 * First things first, this app works with the backend :computer: which could be found [here](https://github.com/anikettyagi13/Chores-backend). You are requested to setup the backend as well.
