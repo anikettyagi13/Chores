@@ -10,6 +10,7 @@ This application will give work to the person needing it, and will take the load
 ## Preview of the app-:
 
 --
+
 I am proud to ask for some of the brilliant minds :heart_eyes: out there, to come let's build this project together :relaxed:.
 
 --
