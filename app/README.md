@@ -8,11 +8,11 @@ This application will give work to the person needing it, and will take the load
 
 ---
 ## Preview of the app-:
-![Preview](https://github.com/anikettyagi13/Chores/blob/master/assests_readme/preview.mp4)
+https://user-images.githubusercontent.com/52878122/119886892-1c1f4680-bf51-11eb-9d64-9dfeaddbbc1f.mp4
 
 ---
 
-I am proud to ask for some of the brilliant minds :heart_eyes: out there, to come let's build this project together :relaxed:.
+I am proud to ask for some of the brilliant minds :heart_eyes: out there, to come and let's build this project together :relaxed:.
 
 ## SETUP
 * First things first, this app works with the backend :computer: which could be found [here](https://github.com/anikettyagi13/Chores-backend). You are requested to setup the backend as well.
