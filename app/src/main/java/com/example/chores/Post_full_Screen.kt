@@ -339,12 +339,6 @@ class Post_full_Screen : AppCompatActivity(),
         popupMenu.menuInflater.inflate(R.menu.post_menu,popupMenu.menu)
         popupMenu.setOnMenuItemClickListener {
             when(it.itemId){
-                R.id.edit_post->{
-                    Toast.makeText(applicationContext,"edit",Toast.LENGTH_LONG).show()
-                }
-                R.id.delete->{
-                    Toast.makeText(applicationContext,"edit",Toast.LENGTH_LONG).show()
-                }
                 R.id.applied_by->{
                     val intent  =Intent(this@Post_full_Screen,AppliedByList::class.java)
                     intent.putExtra("post_id",postInfo.post_id)

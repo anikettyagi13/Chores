@@ -10,4 +10,5 @@ data class UserInfoAppliedList(var name:String,
                           val user_id:String,
                           var bio:String,
                           var website:String,
-                          var status:String, val time:Long)
+                          var status:String,
+                               val time:Long)

@@ -58,6 +58,9 @@ interface ApiInterface {
     @POST("getUserPosts")
     fun getUserPosts(@Header("Token")Body:String, @Body body:timeInfoAndUserId):Call<ArrayList<postData>>
 
+    @POST("getSearchPosts/{search}")
+    fun getSearchPosts(@Path("search")id:String,@Body body:timeInfoAndUserId):Call<ArrayList<postData>>
+
     @POST("getUserPosts/{id}")
     fun getUserPostsById( @Body body:timeInfoAndUserId,@Path("id")id:String):Call<ArrayList<postData>>
 

@@ -355,7 +355,7 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
                 else{
                     if(response.body()!!.size>0){
                         postList.addAll(response.body()!!)
-                        for(i in 0..response.body()!!.size){
+                        for(i in 0..response.body()!!.size-1){
                             if(millis>response.body()!![i].time){
                                 break
                             }else{
@@ -377,12 +377,6 @@ class AccountFragment(val userInfoInterface: userInfoInterface): Fragment(),
         popupMenu.menuInflater.inflate(R.menu.post_menu,popupMenu.menu)
         popupMenu.setOnMenuItemClickListener {
             when(it.itemId){
-                R.id.edit_post->{
-                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
-                }
-                R.id.delete->{
-                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
-                }
                 R.id.applied_by->{
                     val intent = Intent(context!!,AppliedByList::class.java)
                     intent.putExtra("post_id",postList[position].post_id)

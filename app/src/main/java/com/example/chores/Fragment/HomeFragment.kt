@@ -381,13 +381,6 @@ class HomeFragment: Fragment(),
         popupMenu.menuInflater.inflate(R.menu.post_menu,popupMenu.menu)
         popupMenu.setOnMenuItemClickListener {
             when(it.itemId){
-                R.id.edit_post->{
-                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
-
-                }
-                R.id.delete->{
-                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
-                }
                 R.id.applied_by->{
                     val intent = Intent(context!!,AppliedByList::class.java)
                     intent.putExtra("post_id",postList[position].post_id)

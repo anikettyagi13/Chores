@@ -5,11 +5,11 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.MotionEvent
 import android.view.View
-import android.view.View.OnTouchListener
 import android.view.ViewGroup
 import android.widget.*
 import androidx.fragment.app.Fragment
@@ -21,6 +21,7 @@ import com.example.chores.Api.Json.timeInfoAndUserId
 import com.example.chores.Api.RetrofitBuilder
 import com.example.chores.utils.Adapters.QuestionAnswerAdapter
 import com.example.chores.utils.Adapters.postAdapter
+import com.example.chores.utils.ClickListeners.appliedClickListener
 import com.example.chores.utils.ClickListeners.postClickListener
 import com.example.chores.utils.ClickListeners.questionAnswerClickListener
 import com.example.chores.utils.postData
@@ -40,14 +41,20 @@ import retrofit2.Callback
 import retrofit2.Response
 
 
-class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerClickListener {
+class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerClickListener,appliedClickListener {
     lateinit var sp:SharedPreferences
     lateinit var userInfo :UserInfoResponse
     lateinit var postAdapter:postAdapter
+    lateinit var searchPostAdapter:postAdapter
     var postList = ArrayList<postData>()
     var millis =System.currentTimeMillis()
+    var millis2 =System.currentTimeMillis()
     val userList = mutableMapOf<String,userBasicInfo>()
     var new_resume = 0
+    var searched =0
+    var searchPostsList = ArrayList<postData>()
+    var noMoreSearchPost = 1
+
     lateinit var uri_resume:Uri
     var uploading =false
     lateinit var QuestionAnswerAdapter: QuestionAnswerAdapter
@@ -73,23 +80,81 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
             getPosts()
         }
 
+        val recyclerView_search_posts :RecyclerView = fragment.findViewById(R.id.search_posts_show)
+        searchPostAdapter = postAdapter(searchPostsList,this,userInfo,true)
+        val layoutManager_search_posts = LinearLayoutManager(context!!)
+        recyclerView_search_posts.adapter= searchPostAdapter
+        recyclerView_search_posts.layoutManager = layoutManager_search_posts
         fragment.search.isFocusableInTouchMode = true
 
-        fragment.search.setOnTouchListener(OnTouchListener { v, event ->
-            val DRAWABLE_LEFT = 0
-            val DRAWABLE_TOP = 1
-            val DRAWABLE_RIGHT = 2
-            Log.i("message","ASdasdasdas")
-            val DRAWABLE_BOTTOM = 3
-            if(event.getAction() == MotionEvent.ACTION_UP) {
-                if(event.getRawX()+40 >= (fragment.search.getRight() - fragment.search.getCompoundDrawables()[DRAWABLE_RIGHT].getBounds().width()))  {
-                    Log.i("message","tyagipp")
-                    Toast.makeText(context!!,"On click",Toast.LENGTH_LONG).show()
-                    return@OnTouchListener true
+
+
+        fragment.remove_search.setOnClickListener {
+            search_global.visibility = View.VISIBLE
+            searching.visibility = View.GONE
+            searchPostsList.clear()
+            fragment.search_now.visibility = View.VISIBLE
+            fragment.remove_search.visibility = View.GONE
+            fragment.search.setText("")
+            searched =0
+        }
+
+        fragment.search.addTextChangedListener(object : TextWatcher {
+            override fun afterTextChanged(p0: Editable?) {
+            }
+
+            override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            }
+
+            override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+                fragment.search_now.visibility = View.VISIBLE
+                fragment.remove_search.visibility =View.GONE
+            }
+        })
+
+
+
+
+        fragment.search_now.setOnClickListener {
+            if(fragment.search.text.trim().length ==0) Toast.makeText(context!!,"Nothing Found in Search Field",Toast.LENGTH_LONG).show()
+            else{
+                searched = 1
+                fragment.search_global.visibility = View.GONE
+                fragment.searching.visibility = View.VISIBLE
+                fragment.search_posts_show.visibility = View.VISIBLE
+                searchPostsList.clear()
+                pbSearch.visibility =View.VISIBLE
+                fragment.search_now.visibility = View.GONE
+                fragment.remove_search.visibility = View.VISIBLE
+                doSearchPosts(fragment.search.text.trim().toString())
+            }
+        }
+
+        recyclerView_search_posts.addOnScrollListener(object : RecyclerView.OnScrollListener() {
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+//                super.onScrolled(recyclerView, dx, dy)
+                val lastViewed = layoutManager_search_posts.findLastVisibleItemPosition()
+                if(lastViewed >=(searchPostsList.size-2)){
+                    if(!loading && noMoreSearchPost==0){
+                        loading = true;
+                        fragment.pbSearch.visibility = View.VISIBLE
+                        doSearchPosts(search.text.trim().toString())
+                    }
                 }
             }
-            false
         })
+
+        if(searched == 0 ){
+            fragment.searching.visibility = View.GONE
+            fragment.search_global.visibility = View.VISIBLE
+            fragment.search_now.visibility = View.VISIBLE
+            fragment.remove_search.visibility = View.GONE
+        }else{
+            fragment.search_now.visibility = View.GONE
+            fragment.remove_search.visibility = View.VISIBLE
+            fragment.searching.visibility = View.VISIBLE
+            fragment.search_global.visibility = View.GONE
+        }
 
         recyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
             override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -113,6 +178,81 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
         }
 
         return fragment
+    }
+
+    private fun doSearchPosts(search:String){
+        try{
+            val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
+        lateinit var timeInfo : timeInfoAndUserId
+            val token  = sp.getString("token","")
+            val id  = sp.getString("id","")
+        if(searchPostsList.size==0){
+            timeInfo = timeInfoAndUserId(0,millis2)
+        }else {
+            var k = searchPostsList[searchPostsList.size - 1].time
+            for (i in searchPostsList.size - 1 downTo 0) {
+                if (millis2 > searchPostsList[i].time) {
+                    k = searchPostsList[i].time
+                    break
+                } else {
+                    millis2 = searchPostsList[i].time
+                }
+            }
+            timeInfo = timeInfoAndUserId(millis,k)
+        }
+        val retrofitData = retrofitBuilder.getSearchPosts(search,timeInfo)
+            retrofitData.enqueue(object : Callback<ArrayList<postData>?> {
+                override fun onFailure(call: Call<ArrayList<postData>?>, t: Throwable) {
+                    Toast.makeText(context!!,"Internet Connection Required!",Toast.LENGTH_LONG).show()
+                }
+
+                override fun onResponse(
+                    call: Call<ArrayList<postData>?>,
+                    response: Response<ArrayList<postData>?>
+                ) {
+                    if(response.isSuccessful){
+                        val p = response.body()!!
+                        if(p.size <9) noMoreSearchPost = 0
+                        val k = ArrayList<String>()
+                        val o = ArrayList<String>()
+                        for(i in p){
+                            val a = userList.get(i.user_id)
+                            if(a == null) k.add(i.user_id)
+                            o.add(i.post_id)
+                        }
+                        val basicInfo = ArrayList<Deferred<Response<userBasicInfo>>>()
+                        val status = ArrayList<Deferred<Response<String>>>()
+                        val like = ArrayList<Deferred<Response<String>>>()
+                        CoroutineScope(IO).launch {
+                            val retrofitBuilder = RetrofitBuilder().retrofitBuilder()
+                            k.map {
+                                val retrofitData = retrofitBuilder.basicUserInfo(it)
+                                basicInfo.add( async{ retrofitData.execute() })
+                            }
+                            o.map{
+                                var retrofitData =retrofitBuilder.getPostStatus("$token id $id",it)
+                                status.add( async{retrofitData.execute()} )
+                            }
+                            o.map{
+                                var retrofitData = retrofitBuilder.getIfLiked("$token id $id",it)
+                                like.add( async{retrofitData.execute()} )
+                            }
+                            try{
+                                showPosts(basicInfo.awaitAll(),status.awaitAll(),like.awaitAll(),p,true)
+                            }catch(e:Throwable){
+                                Log.i("message","exception $e ${e.cause}" )
+                            }
+                        }
+                    }else{
+                        pbSearch.visibility = View.GONE
+                        loading = false
+                    }
+                }
+            })
+        }catch(e:Exception){
+
+        }
+
     }
 
     private fun getPosts() {
@@ -173,7 +313,7 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
                                 like.add( async{retrofitData.execute()} )
                             }
                             try{
-                                showPosts(basicInfo.awaitAll(),status.awaitAll(),like.awaitAll(),p)
+                                showPosts(basicInfo.awaitAll(),status.awaitAll(),like.awaitAll(),p,false)
                             }catch(e:Throwable){
                                 Log.i("message","exception $e ${e.cause}" )
                             }
@@ -198,7 +338,7 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
         })
     }
 
-    private suspend fun showPosts(basicInfo: List<Response<userBasicInfo>>, status: List<Response<String>>,like:List<Response<String>>,posts:ArrayList<postData>) {
+    private suspend fun showPosts(basicInfo: List<Response<userBasicInfo>>, status: List<Response<String>>,like:List<Response<String>>,posts:ArrayList<postData>,search_related:Boolean) {
         try{
             withContext(Main){
                 var k=0
@@ -253,8 +393,14 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
                 for( i in set){
                     posts.removeAt(i)
                 }
-                postList.addAll(posts)
-                postAdapter.notifyDataSetChanged()
+                if(search_related){
+                    searchPostsList.addAll(posts)
+                    Log.i("message","sadas $searchPostsList" )
+                    searchPostAdapter.notifyDataSetChanged()
+                }else{
+                    postList.addAll(posts)
+                    postAdapter.notifyDataSetChanged()
+                }
             }
             loading = false
             noMore = false
@@ -425,13 +571,6 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
         popupMenu.menuInflater.inflate(R.menu.post_menu,popupMenu.menu)
         popupMenu.setOnMenuItemClickListener {
             when(it.itemId){
-                R.id.edit_post->{
-                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
-
-                }
-                R.id.delete->{
-                    Toast.makeText(context!!,"edit",Toast.LENGTH_LONG).show()
-                }
                 R.id.applied_by->{
                     val intent = Intent(context!!, AppliedByList::class.java)
                     intent.putExtra("post_id",postList[position].post_id)
@@ -452,5 +591,50 @@ class SearchFragment: Fragment(),postClickListener,userInterface,questionAnswerC
         editor.putString("username","")
         val intent  = Intent(activity, LoginActivity::class.java)
         startActivity(intent)
+    }
+
+    override fun assignClick(
+        position: Int,
+        assign: View,
+        userList: View,
+        excess_buttons: View,
+        chat: View,
+        date2: View,
+        date: View
+    ) {
+    }
+
+    override fun rejectClick(
+        position: Int,
+        assign: View,
+        userList: View,
+        excess_buttons: View,
+        chat: View,
+        date2: View,
+        date: View
+    ) {
+    }
+
+    override fun rejected(
+        assign: View,
+        userList: View,
+        excess_buttons: View,
+        chat: View,
+        date2: View,
+        date: View
+    ) {
+    }
+
+    override fun assigned(
+        assign: View,
+        userList: View,
+        excess_buttons: View,
+        chat: View,
+        date2: View,
+        date: View
+    ) {
+    }
+
+    override fun showRequirements(position: Int) {
     }
 }
